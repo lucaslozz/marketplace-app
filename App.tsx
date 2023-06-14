@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from 'react-native';
 
 import {
   useFonts,
@@ -9,21 +9,20 @@ import { Text, View } from 'native-base';
 
 import { NativeBaseProvider } from 'native-base';
 import { theme } from './src/theme';
-import { Loading } from './src/theme/components/Loading';
+import { Loading } from './src/components/Loading';
+import { SignIn } from './src/screens/SignIn';
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
 
   return (
     <NativeBaseProvider theme={theme}>
-      {fontsLoaded ? (
-        <View flex={1} alignItems="center" justifyContent="center">
-          <Text>Hello World</Text>
-          <StatusBar style="auto" />
-        </View>
-      ) : (
-        <Loading />
-      )}
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle={'dark-content'}
+      />
+      {fontsLoaded ? <SignIn /> : <Loading />}
     </NativeBaseProvider>
   );
 }
