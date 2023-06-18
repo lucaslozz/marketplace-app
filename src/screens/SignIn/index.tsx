@@ -6,10 +6,40 @@ import { Text, VStack, Pressable, Icon, ScrollView } from 'native-base';
 import LogoSvg from '../../assets/LogoSvg.svg';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
-import sizes from 'native-base/lib/typescript/theme/base/sizes';
+import { useForm, Controller } from 'react-hook-form';
+
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+type SignInFormData = {
+  email: string;
+  password: string;
+};
+
+const signInSchema = yup.object({
+  email: yup
+    .string()
+    .required('Digite seu e-mail')
+    .email('Digite um e-mail válido'),
+  password: yup.string().required('Digite sua senha'),
+});
 
 export function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<SignInFormData>({
+    resolver: yupResolver(signInSchema),
+  });
+
+  function handleSignIn({ email, password }: SignInFormData) {
+    console.log(email, password);
+  }
+
   return (
     <ScrollView>
       <VStack
@@ -31,27 +61,53 @@ export function SignIn() {
         <Text mt="76" mb="4" fontSize="sm" color="gray.200" fontFamily="body">
           Acesse sua conta
         </Text>
-        <Input placeholder="E-mail" mb="4" />
-        <Input
-          type={showPassword ? 'text' : 'password'}
-          InputRightElement={
-            <Pressable onPress={() => setShowPassword(!showPassword)}>
-              <Icon
-                as={
-                  <MaterialIcons
-                    name={showPassword ? 'visibility' : 'visibility-off'}
-                  />
-                }
-                size={5}
-                mr="2"
-                color="muted.400"
-              />
-            </Pressable>
-          }
-          placeholder="Password"
-          mb={8}
+
+        <Controller
+          name="email"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              placeholder="E-mail"
+              mb="6"
+              onChangeText={onChange}
+              value={value}
+              isInvalid={!!errors.email}
+              errorMessage={errors.email?.message}
+            />
+          )}
         />
-        <Button title="Entrar" mb="16" />
+
+        <Controller
+          name="password"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              type={showPassword ? 'text' : 'password'}
+              InputRightElement={
+                <Pressable onPress={() => setShowPassword(!showPassword)}>
+                  <Icon
+                    as={
+                      <MaterialIcons
+                        name={showPassword ? 'visibility' : 'visibility-off'}
+                      />
+                    }
+                    size={5}
+                    mr="2"
+                    color="muted.400"
+                  />
+                </Pressable>
+              }
+              placeholder="Password"
+              mb={8}
+              onChangeText={onChange}
+              value={value}
+              isInvalid={!!errors.password}
+              errorMessage={errors.password?.message}
+            />
+          )}
+        />
+
+        <Button title="Entrar" mb="16" onPress={handleSubmit(handleSignIn)} />
       </VStack>
       <VStack alignItems="center" px="12">
         <Text mt="55" mb={4} fontFamily="body" fontSize="sm" color="gray.200">
