@@ -8,4 +8,7 @@ module.exports = {
     '^.+((@)?react-native).+\\.(js|jsx)$': 'babel-jest',
     '^.+\\.(js|ts|jsx|tsx)$': '@swc/jest',
   },
+  moduleNameMapper: {
+    '\\.svg': '<rootDir>/__mocks__/svgMock.js',
+  },
 };
