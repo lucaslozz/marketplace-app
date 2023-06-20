@@ -5,12 +5,11 @@ import {
   Karla_400Regular,
   Karla_700Bold,
 } from '@expo-google-fonts/karla';
-import { Text, View } from 'native-base';
 
 import { NativeBaseProvider } from 'native-base';
 import { theme } from './src/theme';
 import { Loading } from './src/components/Loading';
-import { SignIn } from './src/screens/SignIn';
+import { Routes } from './src/routes';
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
@@ -22,7 +21,7 @@ export default function App() {
         backgroundColor="transparent"
         barStyle={'dark-content'}
       />
-      {fontsLoaded ? <SignIn /> : <Loading />}
+      {fontsLoaded ? <Routes /> : <Loading />}
     </NativeBaseProvider>
   );
 }
