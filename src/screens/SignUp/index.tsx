@@ -2,7 +2,15 @@ import { useEffect, useState } from 'react';
 
 import { MaterialIcons } from '@expo/vector-icons';
 
-import { Text, VStack, Pressable, Icon, ScrollView, Box } from 'native-base';
+import {
+  Text,
+  VStack,
+  Pressable,
+  Icon,
+  ScrollView,
+  Box,
+  useToast,
+} from 'native-base';
 import LogoSvg from '../../assets/LogoSvg.svg';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
@@ -11,7 +19,7 @@ import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useLogin, { Body } from '../../services/requests/user/useLogin';
-import { err } from 'react-native-svg/lib/typescript/xml';
+
 import { useNavigation } from '@react-navigation/native';
 import { AuthNavigatorRoutesProps } from '../../routes/auth.routes';
 import { UserPhoto } from '../../components/UserPhoto';
@@ -20,6 +28,9 @@ import avatarDefault from '../../assets/avatarDefault.png';
 
 import { EvilIcons } from '@expo/vector-icons';
 
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
+
 type SignUpFormData = {
   name: string;
   email: string;
@@ -27,6 +38,18 @@ type SignUpFormData = {
   password: string;
   passwordConfirmation: string;
 };
+
+type FileInfoProps = FileSystem.FileInfo & {
+  size: number;
+  md5?: string | undefined;
+  modificationTime: number;
+};
+
+interface AvatarProps {
+  name: string;
+  uri: string;
+  type: string;
+}
 
 const signUpSchema = yup.object({
   name: yup.string().required('Digite seu nome'),
@@ -47,6 +70,11 @@ export function SignUp() {
   const [showPasswordConfirmation, setShowPasswordConfirmation] =
     useState(false);
 
+  const [avatar, setAvatar] = useState<AvatarProps | null>(null);
+  const [photoIsLoading, setPhotoIsLoading] = useState(false);
+
+  const { show } = useToast();
+
   const { navigate } = useNavigation<AuthNavigatorRoutesProps>();
 
   const {
@@ -60,6 +88,47 @@ export function SignUp() {
 
   function handleSignUp({ email, password }: SignUpFormData) {
     console.log(email, password);
+  }
+
+  async function updateAvatar() {
+    try {
+      setPhotoIsLoading(true);
+      const photoSelected = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        aspect: [4, 4],
+        allowsEditing: true,
+      });
+
+      if (photoSelected.canceled) {
+        return;
+      }
+
+      if (photoSelected.assets[0].uri) {
+        const photoInfo = (await FileSystem.getInfoAsync(
+          photoSelected.assets[0].uri,
+          { size: true },
+        )) as FileInfoProps;
+
+        if (photoInfo.size && photoInfo.size / 1024 / 1024 > 5) {
+          return show({
+            title: 'Essa imagem é muito grande. Escolha uma de até 5MB',
+            placement: 'top',
+            bgColor: 'red.500',
+          });
+        }
+
+        const fileExtension = photoSelected.assets[0].uri.split('.').pop();
+
+        const photoFile = {
+          name: `avatar.${fileExtension}`.toLowerCase(),
+          uri: photoSelected.assets[0].uri,
+          type: `image/${fileExtension}`,
+        } as any;
+
+        setAvatar(photoFile);
+      }
+    } catch (error) {}
   }
 
   return (
@@ -81,7 +150,7 @@ export function SignUp() {
 
         <Box mt="8" mb="4" position="relative">
           <UserPhoto
-            source={avatarDefault}
+            source={avatar ? { uri: avatar.uri } : avatarDefault}
             size={88}
             alt="Imagem de perfil do usuário"
           />
@@ -96,7 +165,7 @@ export function SignUp() {
             _pressed={{
               bgColor: 'darkBlue.800',
             }}
-            onPress={() => {}}
+            onPress={updateAvatar}
           >
             <Icon as={EvilIcons} name="pencil" color="gray.600" size="6" />
           </Pressable>
