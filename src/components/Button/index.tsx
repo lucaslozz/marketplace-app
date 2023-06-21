@@ -20,6 +20,9 @@ export function Button({ title, variant = 'primary', ...props }: ButtonProps) {
       w="full"
       fontFamily={'heading'}
       fontSize="sm"
+      _pressed={{
+        bgColor: 'gray.400',
+      }}
       {...props}
     >
       <Text

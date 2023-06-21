@@ -11,6 +11,8 @@ import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useLogin, { Body } from '../../services/requests/user/useLogin';
+import { useNavigation } from '@react-navigation/native';
+import { AuthNavigatorRoutesProps } from '../../routes/auth.routes';
 
 type SignInFormData = {
   email: string;
@@ -27,6 +29,8 @@ const signInSchema = yup.object({
 
 export function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const { navigate } = useNavigation<AuthNavigatorRoutesProps>();
 
   const {
     control,
@@ -114,7 +118,12 @@ export function SignIn() {
         <Text mt="55" mb={4} fontFamily="body" fontSize="sm" color="gray.200">
           Ainda não tem acesso?
         </Text>
-        <Button title="Criar uma conta" mb="16" variant="terciary" />
+        <Button
+          title="Criar uma conta"
+          mb="16"
+          variant="terciary"
+          onPress={() => navigate('signUp')}
+        />
       </VStack>
     </ScrollView>
   );
