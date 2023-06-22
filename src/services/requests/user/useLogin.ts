@@ -1,38 +1,37 @@
-// import { useFetch } from '../../../hooks/useFetch';
-// import { UseFetchProps } from '../../../hooks/useFetch/types';
+import { AxiosPromise } from 'axios';
+import { api } from '../../api';
+import { useMutation } from '@tanstack/react-query';
 
-// const endpoint = () => '/sessions/';
+interface SignUpBody {
+  email: string;
+  password: string;
+}
 
-// type Params = {
-//   options?: Partial<UseFetchProps>;
-// };
+type User = {
+  id: string;
+  avatar: string;
+  name: string;
+  email: string;
+  tel: string;
+  created_at: Date;
+  updated_at: Date;
+};
 
-// type User = {
-//   id: string;
-//   avatar: string;
-//   name: string;
-//   email: string;
-//   tel: number;
-//   created_at: Date;
-//   updated_at: Date;
-// };
+interface SignUpResponse {
+  token: string;
+  user: User;
+  'refresh-token': string;
+}
 
-// type Response = {
-//   token: string;
-//   user: User;
-//   'refresh-token': string;
-// };
+const fetchData = async (body: SignUpBody): AxiosPromise<SignUpResponse> => {
+  const response = await api.post<SignUpResponse>('/sessions/', body);
+  return response;
+};
 
-// export type Body = {
-//   email: string;
-//   password: string;
-// };
+export function useLogin() {
+  const mutate = useMutation({
+    mutationFn: fetchData,
+  });
 
-// const useLogin = ({ options }: Params) =>
-//   useFetch<Body, Response>({
-//     url: endpoint(),
-//     method: 'POST',
-//     ...options,
-//   });
-
-// export default useLogin;
+  return mutate;
+}

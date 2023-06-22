@@ -13,6 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { useNavigation } from '@react-navigation/native';
 import { AuthNavigatorRoutesProps } from '../../routes/auth.routes';
+import { useLogin } from '../../services/requests/user/useLogin';
 
 type SignInFormData = {
   email: string;
@@ -32,6 +33,8 @@ export function SignIn() {
 
   const { navigate } = useNavigation<AuthNavigatorRoutesProps>();
 
+  const { mutate } = useLogin();
+
   const {
     control,
     handleSubmit,
@@ -41,7 +44,9 @@ export function SignIn() {
     resolver: yupResolver(signInSchema),
   });
 
-  function handleSignIn({ email, password }: SignInFormData) {}
+  function handleSignIn({ email, password }: SignInFormData) {
+    mutate({ email, password });
+  }
 
   return (
     <ScrollView>
