@@ -30,8 +30,10 @@ import { EvilIcons } from '@expo/vector-icons';
 
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import useSignUp from '../../services/requests/user/useSignUp';
 
 type SignUpFormData = {
+  avatar?: AvatarProps;
   name: string;
   email: string;
   phone: string;
@@ -73,6 +75,8 @@ export function SignUp() {
   const [avatar, setAvatar] = useState<AvatarProps | null>(null);
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
 
+  const { fetch } = useSignUp({});
+
   const { show } = useToast();
 
   const { navigate } = useNavigation<AuthNavigatorRoutesProps>();
@@ -85,10 +89,6 @@ export function SignUp() {
   } = useForm<SignUpFormData>({
     resolver: yupResolver(signUpSchema),
   });
-
-  function handleSignUp({ email, password }: SignUpFormData) {
-    console.log(email, password);
-  }
 
   async function updateAvatar() {
     try {
@@ -127,8 +127,29 @@ export function SignUp() {
         } as any;
 
         setAvatar(photoFile);
+        console.log(photoFile);
       }
     } catch (error) {}
+  }
+
+  function handleSignUp({
+    avatar,
+    name,
+    email,
+    phone,
+    password,
+  }: SignUpFormData) {
+    const formData = new FormData();
+
+    console.log(avatar);
+
+    formData.append('avatar', avatar);
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('phone', phone);
+    formData.append('password', password);
+
+    console.log(formData);
   }
 
   return (

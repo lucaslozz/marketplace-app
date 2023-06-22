@@ -8,7 +8,7 @@ export interface UseFetchProps<Body = any> {
   method?: METHOD_REQUEST;
   lateRequest?: boolean;
   componentName?: string;
-  headers?: AxiosRequestHeaders;
+  headers?: Record<string, string>;
 }
 
 export interface ErrorInfo {
