@@ -10,7 +10,7 @@ import { useForm, Controller } from 'react-hook-form';
 
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import useLogin, { Body } from '../../services/requests/user/useLogin';
+
 import { useNavigation } from '@react-navigation/native';
 import { AuthNavigatorRoutesProps } from '../../routes/auth.routes';
 
@@ -41,9 +41,7 @@ export function SignIn() {
     resolver: yupResolver(signInSchema),
   });
 
-  function handleSignIn({ email, password }: SignInFormData) {
-    console.log(email, password);
-  }
+  function handleSignIn({ email, password }: SignInFormData) {}
 
   return (
     <ScrollView>

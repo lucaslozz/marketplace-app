@@ -1,44 +1,43 @@
-import { useFetch } from '../../../hooks/useFetch';
-import { UseFetchProps } from '../../../hooks/useFetch/types';
+import { api } from '../../api';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-const endpoint = () => '/users/';
+interface AvatarProps {
+  name: string;
+  uri: string;
+  type: string;
+}
 
-type Params = {
-  options?: Partial<UseFetchProps>;
-};
-
-type User = {
-  id: string;
-  avatar: string;
+interface SignUpBody {
+  avatar?: AvatarProps;
   name: string;
   email: string;
-  tel: number;
-  created_at: Date;
-  updated_at: Date;
-};
-
-type Response = {
-  token: string;
-  user: User;
-  'refresh-token': string;
-};
-
-export type FormData = {
-  avatar: File;
-  name: string;
   phone: string;
-  email: string;
   password: string;
-};
+}
 
-const useSignUp = ({ options }: Params) =>
-  useFetch<Body, Response>({
-    url: endpoint(),
+const fetchData = async (body: SignUpBody) => {
+  const formData = new FormData();
+  if (body.avatar) {
+    formData.append('avatar', body.avatar?.uri);
+  }
+
+  console.log(body.avatar?.uri);
+  formData.append('name', body.name);
+  formData.append('email', body.email);
+  formData.append('phone', body.phone);
+  formData.append('password', body.password);
+
+  await api.post('/users/', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
-    method: 'POST',
-    ...options,
+  });
+};
+
+export function useSignUp() {
+  const mutate = useMutation({
+    mutationFn: fetchData,
   });
 
-export default useSignUp;
+  return mutate;
+}

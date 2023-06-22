@@ -18,7 +18,6 @@ import { useForm, Controller } from 'react-hook-form';
 
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import useLogin, { Body } from '../../services/requests/user/useLogin';
 
 import { useNavigation } from '@react-navigation/native';
 import { AuthNavigatorRoutesProps } from '../../routes/auth.routes';
@@ -30,7 +29,7 @@ import { EvilIcons } from '@expo/vector-icons';
 
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
-import useSignUp from '../../services/requests/user/useSignUp';
+import { useSignUp } from '../../services/requests/user/useSignUp';
 
 type SignUpFormData = {
   avatar?: AvatarProps;
@@ -75,7 +74,7 @@ export function SignUp() {
   const [avatar, setAvatar] = useState<AvatarProps | null>(null);
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
 
-  const { fetch } = useSignUp({});
+  const { mutate, isLoading, isError, error } = useSignUp();
 
   const { show } = useToast();
 
@@ -127,7 +126,6 @@ export function SignUp() {
         } as any;
 
         setAvatar(photoFile);
-        console.log(photoFile);
       }
     } catch (error) {}
   }
@@ -139,19 +137,20 @@ export function SignUp() {
     phone,
     password,
   }: SignUpFormData) {
-    const formData = new FormData();
-
-    console.log(avatar);
-
-    formData.append('avatar', avatar);
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('phone', phone);
-    formData.append('password', password);
-
-    console.log(formData);
+    const body = { avatar, name, email, phone, password };
+    console.log('signup', avatar);
+    mutate(body);
   }
 
+  useEffect(() => {
+    if (error) {
+      show({
+        title: isError ? 'Erro ao cadastrar' : 'Erro ao atualizar',
+        placement: 'top',
+        bgColor: 'red.500',
+      });
+    }
+  }, [error]);
   return (
     <ScrollView>
       <VStack flex={1} alignItems={'center'} pt="16" px="12" bg="gray.600">
@@ -213,6 +212,7 @@ export function SignUp() {
           render={({ field: { onChange, value } }) => (
             <Input
               placeholder="E-mail"
+              keyboardType="email-address"
               mb="6"
               onChangeText={onChange}
               value={value}
@@ -228,6 +228,7 @@ export function SignUp() {
           render={({ field: { onChange, value } }) => (
             <Input
               placeholder="Telefone"
+              keyboardType="number-pad"
               mb="6"
               onChangeText={onChange}
               value={value}
@@ -309,6 +310,7 @@ export function SignUp() {
           title="Criar"
           variant="secondary"
           onPress={handleSubmit(handleSignUp)}
+          isLoading={isLoading}
         />
       </VStack>
       <VStack alignItems="center" px="12">
