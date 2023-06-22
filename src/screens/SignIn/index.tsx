@@ -22,6 +22,8 @@ import { useNavigation } from '@react-navigation/native';
 import { AuthNavigatorRoutesProps } from '../../routes/auth.routes';
 import { useLogin } from '../../services/requests/user/useLogin';
 import { AppError } from '../../utils/AppError';
+import { saveStorage } from '../../storage/storage';
+import { user_storage } from '../../storage/storageConfig';
 
 type SignInFormData = {
   email: string;
@@ -41,7 +43,7 @@ export function SignIn() {
 
   const { navigate } = useNavigation<AuthNavigatorRoutesProps>();
 
-  const { mutate, error, isLoading } = useLogin();
+  const { mutate, data, error, isLoading } = useLogin();
 
   const { show } = useToast();
 
@@ -71,6 +73,12 @@ export function SignIn() {
       });
     }
   }, [error]);
+
+  useEffect(() => {
+    if (data?.data) {
+      saveStorage(user_storage, data?.data);
+    }
+  }, [data?.data]);
 
   return (
     <ScrollView>

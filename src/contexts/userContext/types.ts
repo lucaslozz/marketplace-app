@@ -22,6 +22,7 @@ interface UserContextProviderProps {
 
 interface UserContextDataProps {
   user: UserData | null;
+  loadingUser: boolean;
   saveUser: (data: UserData) => void;
 }
 
