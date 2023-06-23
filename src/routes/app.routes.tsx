@@ -5,24 +5,27 @@ import {
   Octicons,
   MaterialIcons,
 } from '@expo/vector-icons';
-import {
-  createMaterialBottomTabNavigator,
-  MaterialBottomTabNavigationProp,
-} from '@react-navigation/material-bottom-tabs';
+
 import { Home } from '../screens/App/Home';
 import { SignOut } from '../screens/App/SignOut';
 import { MyAds } from '../screens/App/MyAds';
+import {
+  createBottomTabNavigator,
+  BottomTabNavigationProp,
+} from '@react-navigation/bottom-tabs';
+import { TouchableOpacity } from 'react-native';
+import { CreateAd } from '../screens/App/CreateAd';
 
 export type AppRoutes = {
   home: undefined;
   ads: undefined;
   signout: undefined;
+  createad: undefined;
 };
 
-export type AppNavigatorRoutesProps =
-  MaterialBottomTabNavigationProp<AppRoutes>;
+export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>;
 
-const { Navigator, Screen } = createMaterialBottomTabNavigator<AppRoutes>();
+const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>();
 
 export function AppRoutes() {
   const { sizes, colors } = useTheme();
@@ -30,11 +33,16 @@ export function AppRoutes() {
 
   return (
     <Navigator
-      initialRouteName="home"
-      activeColor={colors.gray[200]}
-      inactiveColor={colors.gray[400]}
-      labeled={false}
-      barStyle={{ backgroundColor: `${colors.gray[700]}`, height: 72 }}
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarButton: (props) => <TouchableOpacity {...props} />,
+        tabBarActiveTintColor: colors.gray[200],
+        tabBarStyle: {
+          backgroundColor: `${colors.gray[700]}`,
+          height: 72,
+        },
+      }}
     >
       <Screen
         name="home"
@@ -70,6 +78,12 @@ export function AppRoutes() {
             />
           ),
         }}
+      />
+
+      <Screen
+        name="createad"
+        component={CreateAd}
+        options={{ tabBarButton: () => null }}
       />
     </Navigator>
   );
