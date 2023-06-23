@@ -19,7 +19,7 @@ export const theme = extendTheme({
     },
 
     red: {
-      light: '#EE7979',
+      100: '#EE7979',
     },
   },
   fonts: {

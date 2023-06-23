@@ -1,16 +1,22 @@
 import { useTheme } from 'native-base';
 
-import { FontAwesome5 } from '@expo/vector-icons';
+import {
+  MaterialCommunityIcons,
+  Octicons,
+  MaterialIcons,
+} from '@expo/vector-icons';
 import {
   createMaterialBottomTabNavigator,
   MaterialBottomTabNavigationProp,
 } from '@react-navigation/material-bottom-tabs';
-import { Home } from '../screens/Home';
+import { Home } from '../screens/App/Home';
+import { SignOut } from '../screens/App/SignOut';
+import { MyAds } from '../screens/App/MyAds';
 
-type AppRoutes = {
+export type AppRoutes = {
   home: undefined;
-  history: undefined;
-  profile: undefined;
+  ads: undefined;
+  signout: undefined;
 };
 
 export type AppNavigatorRoutesProps =
@@ -24,22 +30,44 @@ export function AppRoutes() {
 
   return (
     <Navigator
-    // screenOptions={{
-    //   headerShown: false,
-    //   tabBarShowLabel: false,
-    //   tabBarActiveTintColor: colors.primary[500],
-    //   tabBarStyle: {
-    //     borderTopWidth: 0,
-    //     height: sizes[16],
-    //   },
-    // }}
+      initialRouteName="home"
+      activeColor={colors.gray[200]}
+      inactiveColor={colors.gray[400]}
+      labeled={false}
+      barStyle={{ backgroundColor: `${colors.gray[700]}`, height: 72 }}
     >
       <Screen
         name="home"
         component={Home}
         options={{
           tabBarIcon: ({ color }) => (
-            <FontAwesome5 name="home" size={iconSize} color={color} />
+            <Octicons name="home" size={iconSize} color={color} />
+          ),
+        }}
+      />
+      <Screen
+        name="ads"
+        component={MyAds}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="ticket-percent-outline"
+              size={iconSize}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Screen
+        name="signout"
+        component={SignOut}
+        options={{
+          tabBarIcon: () => (
+            <MaterialIcons
+              name="logout"
+              size={iconSize}
+              color={colors.red[100]}
+            />
           ),
         }}
       />

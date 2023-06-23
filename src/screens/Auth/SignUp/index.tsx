@@ -11,25 +11,26 @@ import {
   Box,
   useToast,
 } from 'native-base';
-import LogoSvg from '../../assets/LogoSvg.svg';
-import { Input } from '../../components/Input';
-import { Button } from '../../components/Button';
+import LogoSvg from '../../../assets/LogoSvg.svg';
+
 import { useForm, Controller } from 'react-hook-form';
 
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { useNavigation } from '@react-navigation/native';
-import { AuthNavigatorRoutesProps } from '../../routes/auth.routes';
-import { UserPhoto } from '../../components/UserPhoto';
 
-import avatarDefault from '../../assets/avatarDefault.png';
+import avatarDefault from '../../../assets/avatarDefault.png';
 
 import { EvilIcons } from '@expo/vector-icons';
 
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
-import { useSignUp } from '../../services/requests/user/useSignUp';
+import { useSignUp } from '../../../services/requests/user/useSignUp';
+import { AuthNavigatorRoutesProps } from '../../../routes/auth.routes';
+import { UserPhoto } from '../../../components/UserPhoto';
+import { Input } from '../../../components/Input';
+import { Button } from '../../../components/Button';
 
 type SignUpFormData = {
   avatar?: AvatarProps;

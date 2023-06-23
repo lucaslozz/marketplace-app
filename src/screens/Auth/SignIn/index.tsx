@@ -10,21 +10,19 @@ import {
   ScrollView,
   useToast,
 } from 'native-base';
-import LogoSvg from '../../assets/LogoSvg.svg';
-import { Input } from '../../components/Input';
-import { Button } from '../../components/Button';
+import LogoSvg from '../../../assets/LogoSvg.svg';
 import { useForm, Controller } from 'react-hook-form';
 
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { useNavigation } from '@react-navigation/native';
-import { AuthNavigatorRoutesProps } from '../../routes/auth.routes';
-import { useLogin } from '../../services/requests/user/useLogin';
-import { AppError } from '../../utils/AppError';
-import { saveStorage } from '../../storage/storage';
-import { user_storage } from '../../storage/storageConfig';
-import { UserContext } from '../../contexts/userContext/types';
+import { AuthNavigatorRoutesProps } from '../../../routes/auth.routes';
+import { useLogin } from '../../../services/requests/user/useLogin';
+import { UserContext } from '../../../contexts/userContext/types';
+import { AppError } from '../../../utils/AppError';
+import { Input } from '../../../components/Input';
+import { Button } from '../../../components/Button';
 
 type SignInFormData = {
   email: string;
