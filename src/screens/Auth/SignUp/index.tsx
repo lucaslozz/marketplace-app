@@ -139,7 +139,7 @@ export function SignUp() {
     password,
   }: SignUpFormData) {
     const body = { avatar, name, email, phone, password };
-    console.log('signup', avatar);
+
     mutate(body);
   }
 
