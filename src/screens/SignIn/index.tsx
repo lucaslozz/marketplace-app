@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -24,6 +24,7 @@ import { useLogin } from '../../services/requests/user/useLogin';
 import { AppError } from '../../utils/AppError';
 import { saveStorage } from '../../storage/storage';
 import { user_storage } from '../../storage/storageConfig';
+import { UserContext } from '../../contexts/userContext/types';
 
 type SignInFormData = {
   email: string;
@@ -44,6 +45,8 @@ export function SignIn() {
   const { navigate } = useNavigation<AuthNavigatorRoutesProps>();
 
   const { mutate, data, error, isLoading } = useLogin();
+
+  const { saveUser } = useContext(UserContext);
 
   const { show } = useToast();
 
@@ -76,7 +79,7 @@ export function SignIn() {
 
   useEffect(() => {
     if (data?.data) {
-      saveStorage(user_storage, data?.data);
+      saveUser(data.data);
     }
   }, [data?.data]);
 

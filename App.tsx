@@ -12,6 +12,8 @@ import { Loading } from './src/components/Loading';
 import { Routes } from './src/routes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { UserContextProvider } from './src/contexts/userContext';
+
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
 
@@ -19,12 +21,14 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <NativeBaseProvider theme={theme}>
-        <StatusBar
-          translucent
-          backgroundColor="transparent"
-          barStyle={'dark-content'}
-        />
-        {fontsLoaded ? <Routes /> : <Loading />}
+        <UserContextProvider>
+          <StatusBar
+            translucent
+            backgroundColor="transparent"
+            barStyle={'dark-content'}
+          />
+          {fontsLoaded ? <Routes /> : <Loading />}
+        </UserContextProvider>
       </NativeBaseProvider>
     </QueryClientProvider>
   );

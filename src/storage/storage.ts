@@ -19,4 +19,12 @@ async function getStorage(key: string) {
   }
 }
 
-export { saveStorage, getStorage };
+async function removeStorage(key: string) {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export { saveStorage, getStorage, removeStorage };

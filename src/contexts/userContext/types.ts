@@ -24,6 +24,7 @@ interface UserContextDataProps {
   user: UserData | null;
   loadingUser: boolean;
   saveUser: (data: UserData) => void;
+  removeUser: () => void;
 }
 
 const UserContext = createContext<UserContextDataProps>(

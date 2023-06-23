@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 
 import * as T from './types';
-import { getStorage } from '../../storage/storage';
+import { getStorage, removeStorage, saveStorage } from '../../storage/storage';
 import { user_storage } from '../../storage/storageConfig';
 
 export function UserContextProvider({ children }: T.UserContextProviderProps) {
@@ -9,7 +9,27 @@ export function UserContextProvider({ children }: T.UserContextProviderProps) {
   const [loadingUser, setLoadingUser] = useState(false);
 
   function saveUser(user: T.UserData) {
-    setUser(user);
+    try {
+      setLoadingUser(true);
+
+      setUser(user);
+      saveStorage(user_storage, user);
+    } catch (error) {
+    } finally {
+      setLoadingUser(false);
+    }
+  }
+
+  async function removeUser() {
+    try {
+      setLoadingUser(true);
+      setUser(null);
+      await removeStorage(user_storage);
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoadingUser(false);
+    }
   }
 
   useEffect(() => {
@@ -31,7 +51,7 @@ export function UserContextProvider({ children }: T.UserContextProviderProps) {
   }, []);
 
   return (
-    <T.UserContext.Provider value={{ user, loadingUser, saveUser }}>
+    <T.UserContext.Provider value={{ user, loadingUser, saveUser, removeUser }}>
       {children}
     </T.UserContext.Provider>
   );
