@@ -66,7 +66,7 @@ export function SignUp() {
   const [showPasswordConfirmation, setShowPasswordConfirmation] =
     useState(false);
 
-  const { photo, photoIsLoading, photoError, savePhoto } = usePhoto();
+  const { photo, photoIsLoading, photoError, savePhoto } = usePhoto({});
 
   const { mutate, isLoading, isError, error } = useSignUp();
 
@@ -146,7 +146,7 @@ export function SignUp() {
             />
           ) : (
             <UserPhoto
-              source={photo ? { uri: photo.uri } : avatarDefault}
+              source={photo.length > 0 ? { uri: photo[0].uri } : avatarDefault}
               size={88}
               alt="Imagem de perfil do usuário"
             />

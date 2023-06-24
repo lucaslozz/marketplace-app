@@ -15,18 +15,23 @@ import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
 import { usePhoto } from '../../../hooks/usePhoto';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { PhotoCard } from '../../../components/PhotoCard';
 
 export function CreateAd() {
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
-  const { photo, photoError, photoIsLoading, savePhoto } = usePhoto();
+  const { photo, photoError, photoIsLoading, savePhoto, removePhoto } =
+    usePhoto({ isMultiplePhotos: true });
 
   const { show } = useToast();
 
-  function addPhoto() {
-    savePhoto();
+  async function addPhoto() {
+    await savePhoto();
+  }
+
+  function handleRemovePhoto(id: string) {
+    removePhoto(id);
   }
 
   useEffect(() => {
@@ -64,31 +69,40 @@ export function CreateAd() {
             Escolha até 3 imagens para mostrar o quando o seu produto é
             incrível!
           </Text>
+          <HStack>
+            {photo.length > 0 &&
+              photo.map((item) => {
+                return (
+                  <PhotoCard
+                    key={item.uri}
+                    id={item.uri}
+                    source={{ uri: item.uri }}
+                    size={24}
+                    alt="Produto selecionado"
+                    isLoading={photoIsLoading}
+                    deletePhoto={handleRemovePhoto}
+                  />
+                );
+              })}
 
-          {photo ? (
-            <PhotoCard
-              source={{ uri: photo.uri }}
-              size={24}
-              alt="Produto selecionado"
-              deletePhoto={() => {}}
-            />
-          ) : (
-            <TouchableOpacity onPress={addPhoto}>
-              <Box
-                size={24}
-                bgColor="gray.500"
-                rounded="4"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Icon
-                  as={<AntDesign name="plus" />}
-                  size={6}
-                  color="gray.400"
-                />
-              </Box>
-            </TouchableOpacity>
-          )}
+            {photo.length < 3 && (
+              <TouchableOpacity onPress={addPhoto}>
+                <Box
+                  size={24}
+                  bgColor="gray.500"
+                  rounded="4"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Icon
+                    as={<AntDesign name="plus" />}
+                    size={6}
+                    color="gray.400"
+                  />
+                </Box>
+              </TouchableOpacity>
+            )}
+          </HStack>
         </VStack>
       </VStack>
     </ScrollView>

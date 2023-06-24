@@ -1,24 +1,32 @@
 import {
   Image,
   IImageProps,
-  Box,
   Icon,
-  Pressable,
   IconButton,
   ZStack,
+  Skeleton,
 } from 'native-base';
-import { TouchableOpacity } from 'react-native';
 
 import { Feather } from '@expo/vector-icons';
 
 interface PhotoCardProps extends IImageProps {
   size: number;
-  deletePhoto: () => void;
+  id: string;
+  isLoading: boolean;
+  deletePhoto: (id: string) => void;
 }
 
-export function PhotoCard({ size, deletePhoto, ...props }: PhotoCardProps) {
-  return (
-    <ZStack w={size} h={size} position="relative">
+export function PhotoCard({
+  size,
+  id,
+  isLoading,
+  deletePhoto,
+  ...props
+}: PhotoCardProps) {
+  return isLoading ? (
+    <Skeleton h={size} w={size} mr="2" rounded="4" />
+  ) : (
+    <ZStack w={size} h={size} position="relative" mr="2">
       <Image size={size} rounded="4" {...props} resizeMode="cover" />
       <IconButton
         icon={<Icon as={Feather} name="x" color="gray.700" size="3" />}
@@ -29,7 +37,7 @@ export function PhotoCard({ size, deletePhoto, ...props }: PhotoCardProps) {
         position="absolute"
         top={1}
         right={1}
-        onPress={() => deletePhoto()}
+        onPress={() => deletePhoto(id)}
       />
     </ZStack>
   );

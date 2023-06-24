@@ -6,10 +6,15 @@ import * as FileSystem from 'expo-file-system';
 import * as T from './types';
 
 import { AppError } from '../../utils/AppError';
+import { set } from 'react-hook-form';
 
-export function usePhoto() {
+interface usePhotoProps {
+  isMultiplePhotos?: boolean;
+}
+
+export function usePhoto({ isMultiplePhotos = false }: usePhotoProps) {
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
-  const [photo, setPhoto] = useState<T.AvatarProps | null>(null);
+  const [photo, setPhoto] = useState<T.AvatarProps[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
 
   async function savePhoto() {
@@ -48,7 +53,11 @@ export function usePhoto() {
           type: `image/${fileExtension}`,
         } as any;
 
-        setPhoto(photoFile);
+        if (isMultiplePhotos) {
+          setPhoto([...photo, photoFile]);
+        } else {
+          setPhoto([photoFile]);
+        }
       }
     } catch (error) {
       const isAppError = error instanceof AppError;
@@ -61,5 +70,20 @@ export function usePhoto() {
     }
   }
 
-  return { photo, photoIsLoading, photoError, savePhoto };
+  function removePhoto(id: string) {
+    try {
+      setPhotoIsLoading(true);
+      const photoWithoutDeleted = photo.filter((item) => item.uri !== id);
+      setPhoto(photoWithoutDeleted);
+    } catch (error) {
+      const message = new AppError(
+        'Erro ao remover foto. Por gentileza, tente novamente.',
+      );
+      throw message;
+    } finally {
+      setPhotoIsLoading(false);
+    }
+  }
+
+  return { photo, photoIsLoading, photoError, savePhoto, removePhoto };
 }
