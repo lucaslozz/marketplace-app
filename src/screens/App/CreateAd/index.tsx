@@ -6,6 +6,7 @@ import {
   ScrollView,
   Text,
   VStack,
+  useToast,
 } from 'native-base';
 
 import { TouchableOpacity } from 'react-native';
@@ -13,13 +14,30 @@ import { TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
+import { usePhoto } from '../../../hooks/usePhoto';
+import { useEffect } from 'react';
+import { PhotoCard } from '../../../components/PhotoCard';
 
 export function CreateAd() {
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
+  const { photo, photoError, photoIsLoading, savePhoto } = usePhoto();
+
+  const { show } = useToast();
+
   function addPhoto() {
-    console.log('chamou');
+    savePhoto();
   }
+
+  useEffect(() => {
+    if (photoError) {
+      show({
+        title: photoError,
+        placement: 'top',
+        bgColor: 'red.500',
+      });
+    }
+  }, [photoError]);
 
   return (
     <ScrollView paddingX={6} paddingY="12">
@@ -47,17 +65,30 @@ export function CreateAd() {
             incrível!
           </Text>
 
-          <TouchableOpacity onPress={addPhoto}>
-            <Box
+          {photo ? (
+            <PhotoCard
+              source={{ uri: photo.uri }}
               size={24}
-              bgColor="gray.500"
-              rounded="4"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Icon as={<AntDesign name="plus" />} size={6} color="gray.400" />
-            </Box>
-          </TouchableOpacity>
+              alt="Produto selecionado"
+              deletePhoto={() => {}}
+            />
+          ) : (
+            <TouchableOpacity onPress={addPhoto}>
+              <Box
+                size={24}
+                bgColor="gray.500"
+                rounded="4"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Icon
+                  as={<AntDesign name="plus" />}
+                  size={6}
+                  color="gray.400"
+                />
+              </Box>
+            </TouchableOpacity>
+          )}
         </VStack>
       </VStack>
     </ScrollView>
