@@ -10,6 +10,7 @@ import {
   ScrollView,
   Box,
   useToast,
+  Skeleton,
 } from 'native-base';
 import LogoSvg from '../../../assets/LogoSvg.svg';
 
@@ -24,27 +25,20 @@ import avatarDefault from '../../../assets/avatarDefault.png';
 
 import { EvilIcons } from '@expo/vector-icons';
 
-import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
 import { useSignUp } from '../../../services/requests/user/useSignUp';
 import { AuthNavigatorRoutesProps } from '../../../routes/auth.routes';
 import { UserPhoto } from '../../../components/UserPhoto';
 import { Input } from '../../../components/Input';
 import { Button } from '../../../components/Button';
+import { usePhoto } from '../../../hooks/usePhoto';
 
 type SignUpFormData = {
-  avatar?: AvatarProps;
+  photo?: AvatarProps;
   name: string;
   email: string;
   phone: string;
   password: string;
   passwordConfirmation: string;
-};
-
-type FileInfoProps = FileSystem.FileInfo & {
-  size: number;
-  md5?: string | undefined;
-  modificationTime: number;
 };
 
 interface AvatarProps {
@@ -72,8 +66,7 @@ export function SignUp() {
   const [showPasswordConfirmation, setShowPasswordConfirmation] =
     useState(false);
 
-  const [avatar, setAvatar] = useState<AvatarProps | null>(null);
-  const [photoIsLoading, setPhotoIsLoading] = useState(false);
+  const { photo, photoIsLoading, photoError, savePhoto } = usePhoto();
 
   const { mutate, isLoading, isError, error } = useSignUp();
 
@@ -90,55 +83,18 @@ export function SignUp() {
     resolver: yupResolver(signUpSchema),
   });
 
-  async function updateAvatar() {
-    try {
-      setPhotoIsLoading(true);
-      const photoSelected = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 1,
-        aspect: [4, 4],
-        allowsEditing: true,
-      });
-
-      if (photoSelected.canceled) {
-        return;
-      }
-
-      if (photoSelected.assets[0].uri) {
-        const photoInfo = (await FileSystem.getInfoAsync(
-          photoSelected.assets[0].uri,
-          { size: true },
-        )) as FileInfoProps;
-
-        if (photoInfo.size && photoInfo.size / 1024 / 1024 > 5) {
-          return show({
-            title: 'Essa imagem é muito grande. Escolha uma de até 5MB',
-            placement: 'top',
-            bgColor: 'red.500',
-          });
-        }
-
-        const fileExtension = photoSelected.assets[0].uri.split('.').pop();
-
-        const photoFile = {
-          name: `avatar.${fileExtension}`.toLowerCase(),
-          uri: photoSelected.assets[0].uri,
-          type: `image/${fileExtension}`,
-        } as any;
-
-        setAvatar(photoFile);
-      }
-    } catch (error) {}
+  function updateAvatar() {
+    savePhoto();
   }
 
   function handleSignUp({
-    avatar,
+    photo,
     name,
     email,
     phone,
     password,
   }: SignUpFormData) {
-    const body = { avatar, name, email, phone, password };
+    const body = { photo, name, email, phone, password };
 
     mutate(body);
   }
@@ -152,6 +108,17 @@ export function SignUp() {
       });
     }
   }, [error]);
+
+  useEffect(() => {
+    if (photoError) {
+      show({
+        title: photoError,
+        placement: 'top',
+        bgColor: 'red.500',
+      });
+    }
+  }, [photoError]);
+
   return (
     <ScrollView>
       <VStack flex={1} alignItems={'center'} pt="16" px="12" bg="gray.600">
@@ -170,11 +137,20 @@ export function SignUp() {
         </Text>
 
         <Box mt="8" mb="4" position="relative">
-          <UserPhoto
-            source={avatar ? { uri: avatar.uri } : avatarDefault}
-            size={88}
-            alt="Imagem de perfil do usuário"
-          />
+          {photoIsLoading ? (
+            <Skeleton
+              size={88}
+              rounded="full"
+              startColor="gray.500"
+              endColor="gray.400"
+            />
+          ) : (
+            <UserPhoto
+              source={photo ? { uri: photo.uri } : avatarDefault}
+              size={88}
+              alt="Imagem de perfil do usuário"
+            />
+          )}
 
           <Pressable
             padding={2}
