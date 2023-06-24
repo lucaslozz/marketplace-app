@@ -17,6 +17,7 @@ import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
 import { usePhoto } from '../../../hooks/usePhoto';
 import { useEffect, useState } from 'react';
 import { PhotoCard } from '../../../components/PhotoCard';
+import { Input } from '../../../components/Input';
 
 export function CreateAd() {
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
@@ -48,7 +49,7 @@ export function CreateAd() {
     <ScrollView paddingX={6} paddingY="12">
       <VStack>
         <HStack alignItems="center">
-          <TouchableOpacity onPress={() => navigate('home')}>
+          <TouchableOpacity onPress={() => navigate('hometab')}>
             <Icon
               as={<AntDesign name="arrowleft" />}
               size={7}
@@ -69,7 +70,8 @@ export function CreateAd() {
             Escolha até 3 imagens para mostrar o quando o seu produto é
             incrível!
           </Text>
-          <HStack>
+
+          <HStack mb="8">
             {photo.length > 0 &&
               photo.map((item) => {
                 return (
@@ -103,6 +105,20 @@ export function CreateAd() {
               </TouchableOpacity>
             )}
           </HStack>
+
+          <VStack>
+            <Text fontFamily="heading" fontSize="md" color="gray.200" mb="4">
+              Sobre o produto
+            </Text>
+
+            <Input placeholder="Título do anúncio" mb="4" />
+
+            <Input
+              placeholder="Descrição do produto"
+              justifyContent="flex-start"
+              numberOfLines={5}
+            />
+          </VStack>
         </VStack>
       </VStack>
     </ScrollView>
