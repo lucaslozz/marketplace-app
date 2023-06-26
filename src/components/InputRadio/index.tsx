@@ -1,21 +1,37 @@
-import { HStack, Radio } from 'native-base';
-
-interface InputRadioProps {
-  option1: string;
-  option2: string;
-}
-
-export function InputRadio({ option1, option2 }: InputRadioProps) {
+export function InputRadio() {
   return (
-    <Radio.Group name="exampleGroup">
-      <HStack space={5}>
-        <Radio colorScheme="lightBlue" value="1" my={1}>
-          {option1}
-        </Radio>
-        <Radio colorScheme="lightBlue" value="2" my={1}>
-          {option2}
-        </Radio>
-      </HStack>
-    </Radio.Group>
+    <Container>
+      <FormControl isInvalid>
+        <FormControl.Label
+          _text={{
+            fontSize: 'lg',
+            bold: true,
+          }}
+        >
+          Select Prize
+        </FormControl.Label>
+        <Radio.Group
+          name="exampleGroup"
+          accessibilityLabel="select prize"
+          defaultValue={groupValue}
+          onChange={(value) => {
+            setGroupValue(value || '');
+          }}
+        >
+          <Radio value="1" my="1">
+            First
+          </Radio>
+          <Radio value="2" my="1">
+            Second
+          </Radio>
+          <Radio value="3" my="1">
+            Third
+          </Radio>
+        </Radio.Group>
+        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+          You must select a Prize.
+        </FormControl.ErrorMessage>
+      </FormControl>
+    </Container>
   );
 }

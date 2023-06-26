@@ -4,6 +4,7 @@ import {
   HStack,
   Heading,
   Icon,
+  Radio,
   ScrollView,
   Switch,
   Text,
@@ -18,21 +19,30 @@ import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
 import { usePhoto } from '../../../hooks/usePhoto';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { PhotoCard } from '../../../components/PhotoCard';
 import { Input } from '../../../components/Input';
-import { InputRadio } from '../../../components/InputRadio';
+
 import { Button } from '../../../components/Button';
+import { InputCheckBox } from '../../../components/InputCheckBox';
 
 export function CreateAd() {
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
+  const [value, setValue] = useState('new');
+
+  const [paymentOptions, setPaymentOptions] = useState<string[]>([]);
+
+  console.log(paymentOptions);
+
   const { photo, photoError, photoIsLoading, savePhoto, removePhoto } =
     usePhoto({ isMultiplePhotos: true });
 
-  // const {}=useForm()
-
   const { show } = useToast();
+
+  function paymentOptionsSelect(payment: string) {
+    setPaymentOptions([...payment]);
+  }
 
   async function addPhoto() {
     await savePhoto();
@@ -131,8 +141,23 @@ export function CreateAd() {
             numberOfLines={5}
             mb="5"
           />
-
-          <InputRadio option1="Produto novo" option2="Produto usado" />
+          <Radio.Group
+            name="myRadioGroup"
+            color="lightBlue.100"
+            value={value}
+            onChange={(nextValue) => {
+              setValue(nextValue);
+            }}
+          >
+            <HStack space={5}>
+              <Radio value="new" my={1}>
+                Produto novo
+              </Radio>
+              <Radio value="old" my={1}>
+                Produto usado
+              </Radio>
+            </HStack>
+          </Radio.Group>
 
           <Text
             fontFamily="heading"
@@ -152,7 +177,7 @@ export function CreateAd() {
           />
 
           <VStack justifyItems="start">
-            <Heading color="gray.200" fontSize={16} my={2}>
+            <Heading color="gray.200" fontSize="md" my={2}>
               Aceita troca?
             </Heading>
 
@@ -164,36 +189,21 @@ export function CreateAd() {
             />
           </VStack>
 
-          <Checkbox.Group
-            accessibilityLabel="Escolha o método de pagamento."
+          <Text fontFamily="heading" fontSize="md" mb={3}>
+            Meios de pagamento aceitos
+          </Text>
+          <InputCheckBox
+            inputOptions={[
+              'Boleto',
+              'Pix',
+              'Dinheiro',
+              'Cartão de Crédito',
+              'Depósito Bancário',
+            ]}
+            defaultValue={paymentOptions}
+            selectOption={paymentOptionsSelect}
             mb={6}
-          >
-            <Checkbox value="boleto">
-              <Text color="gray.300" fontSize={16}>
-                Boleto
-              </Text>
-            </Checkbox>
-            <Checkbox value="pix">
-              <Text color="gray.300" fontSize={16}>
-                Pix
-              </Text>
-            </Checkbox>
-            <Checkbox value="cash">
-              <Text color="gray.300" fontSize={16}>
-                Dinheiro
-              </Text>
-            </Checkbox>
-            <Checkbox value="card">
-              <Text color="gray.300" fontSize={16}>
-                Cartão de Crédito
-              </Text>
-            </Checkbox>
-            <Checkbox value="deposit">
-              <Text color="gray.300" fontSize={16}>
-                Depósito Bancário
-              </Text>
-            </Checkbox>
-          </Checkbox.Group>
+          />
         </VStack>
       </ScrollView>
 
