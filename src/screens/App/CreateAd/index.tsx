@@ -25,23 +25,28 @@ import { Input } from '../../../components/Input';
 
 import { Button } from '../../../components/Button';
 import { InputCheckBox } from '../../../components/InputCheckBox';
+import { InputRadio } from '../../../components/InputRadio';
 
 export function CreateAd() {
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
-  const [value, setValue] = useState('new');
-
+  const [productOptions, setProductOptions] = useState<string[]>([]);
   const [paymentOptions, setPaymentOptions] = useState<string[]>([]);
-
-  console.log(paymentOptions);
+  const [acceptExchange, setAcceptExchange] = useState(false);
 
   const { photo, photoError, photoIsLoading, savePhoto, removePhoto } =
     usePhoto({ isMultiplePhotos: true });
 
   const { show } = useToast();
 
+  console.log(productOptions);
+
   function paymentOptionsSelect(payment: string) {
     setPaymentOptions([...payment]);
+  }
+
+  function productOptionsSelect(optionSelected: string) {
+    setProductOptions([optionSelected]);
   }
 
   async function addPhoto() {
@@ -141,23 +146,12 @@ export function CreateAd() {
             numberOfLines={5}
             mb="5"
           />
-          <Radio.Group
-            name="myRadioGroup"
-            color="lightBlue.100"
-            value={value}
-            onChange={(nextValue) => {
-              setValue(nextValue);
-            }}
-          >
-            <HStack space={5}>
-              <Radio value="new" my={1}>
-                Produto novo
-              </Radio>
-              <Radio value="old" my={1}>
-                Produto usado
-              </Radio>
-            </HStack>
-          </Radio.Group>
+
+          <InputRadio
+            name="Product quality"
+            radioInputOptions={['Produto novo', 'Produto usado']}
+            selectRadioInputOption={productOptionsSelect}
+          />
 
           <Text
             fontFamily="heading"

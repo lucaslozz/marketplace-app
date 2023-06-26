@@ -1,37 +1,42 @@
-export function InputRadio() {
+import {
+  FormControl,
+  Radio,
+  IRadioGroupProps,
+  WarningOutlineIcon,
+  HStack,
+} from 'native-base';
+
+interface InputRadioProps extends IRadioGroupProps {
+  radioInputOptions: string[];
+  selectRadioInputOption: (value: string) => void;
+}
+
+export function InputRadio({
+  radioInputOptions,
+  selectRadioInputOption,
+  ...props
+}: InputRadioProps) {
   return (
-    <Container>
-      <FormControl isInvalid>
-        <FormControl.Label
-          _text={{
-            fontSize: 'lg',
-            bold: true,
-          }}
-        >
-          Select Prize
-        </FormControl.Label>
-        <Radio.Group
-          name="exampleGroup"
-          accessibilityLabel="select prize"
-          defaultValue={groupValue}
-          onChange={(value) => {
-            setGroupValue(value || '');
-          }}
-        >
-          <Radio value="1" my="1">
-            First
-          </Radio>
-          <Radio value="2" my="1">
-            Second
-          </Radio>
-          <Radio value="3" my="1">
-            Third
-          </Radio>
-        </Radio.Group>
-        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-          You must select a Prize.
-        </FormControl.ErrorMessage>
-      </FormControl>
-    </Container>
+    <FormControl isInvalid={false}>
+      <Radio.Group
+        onChange={(value) => {
+          selectRadioInputOption(value || '');
+        }}
+        {...props}
+      >
+        <HStack space={6}>
+          {radioInputOptions.map((item) => {
+            return (
+              <Radio value={item} key={item}>
+                {item}
+              </Radio>
+            );
+          })}
+        </HStack>
+      </Radio.Group>
+      <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+        You must select a Prize.
+      </FormControl.ErrorMessage>
+    </FormControl>
   );
 }

@@ -7,7 +7,6 @@ import {
 
 interface InputCheckBoxProps extends ICheckboxGroupProps {
   inputOptions: string[];
-
   selectOption: (value: string) => void;
 }
 
