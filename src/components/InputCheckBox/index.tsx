@@ -7,16 +7,21 @@ import {
 
 interface InputCheckBoxProps extends ICheckboxGroupProps {
   inputOptions: string[];
+  isInvalid: boolean;
+  errorMessage: string;
+
   selectOption: (value: string) => void;
 }
 
 export function InputCheckBox({
   inputOptions,
   selectOption,
+  isInvalid,
+  errorMessage,
   ...props
 }: InputCheckBoxProps) {
   return (
-    <FormControl isInvalid={false}>
+    <FormControl isInvalid={isInvalid}>
       <Checkbox.Group
         colorScheme="lightBlue"
         accessibilityLabel="choose multiple items"
@@ -39,8 +44,10 @@ export function InputCheckBox({
           alignItems: 'flex-start',
         }}
         leftIcon={<WarningOutlineIcon size="xs" mt={1} />}
+        position="absolute"
+        bottom={1}
       >
-        You must select at least three methods
+        {errorMessage}
       </FormControl.ErrorMessage>
     </FormControl>
   );

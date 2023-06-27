@@ -8,16 +8,19 @@ import {
 
 interface InputRadioProps extends IRadioGroupProps {
   radioInputOptions: string[];
+  errorMessage: string;
   selectRadioInputOption: (value: string) => void;
 }
 
 export function InputRadio({
   radioInputOptions,
   selectRadioInputOption,
+  isInvalid = false,
+  errorMessage,
   ...props
 }: InputRadioProps) {
   return (
-    <FormControl isInvalid={false}>
+    <FormControl isInvalid={isInvalid}>
       <Radio.Group
         onChange={(value) => {
           selectRadioInputOption(value || '');
@@ -34,8 +37,12 @@ export function InputRadio({
           })}
         </HStack>
       </Radio.Group>
-      <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-        You must select a Prize.
+      <FormControl.ErrorMessage
+        leftIcon={<WarningOutlineIcon size="xs" />}
+        position="absolute"
+        top={6}
+      >
+        {errorMessage}
       </FormControl.ErrorMessage>
     </FormControl>
   );

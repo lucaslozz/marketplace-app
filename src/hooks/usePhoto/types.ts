@@ -6,10 +6,10 @@ type FileInfoProps = FileSystem.FileInfo & {
   modificationTime: number;
 };
 
-interface AvatarProps {
+interface PhotoProps {
   name: string;
   uri: string;
   type: string;
 }
 
-export { FileInfoProps, AvatarProps };
+export { FileInfoProps, PhotoProps };

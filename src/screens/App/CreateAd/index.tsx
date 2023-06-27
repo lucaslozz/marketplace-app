@@ -12,20 +12,42 @@ import {
   ZStack,
   useToast,
 } from 'native-base';
-
-import { TouchableOpacity } from 'react-native';
-
-import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
-import { usePhoto } from '../../../hooks/usePhoto';
-import { useEffect, useState } from 'react';
 import { PhotoCard } from '../../../components/PhotoCard';
-import { Input } from '../../../components/Input';
-
 import { Button } from '../../../components/Button';
+import { Input } from '../../../components/Input';
 import { InputCheckBox } from '../../../components/InputCheckBox';
 import { InputRadio } from '../../../components/InputRadio';
+import { TouchableOpacity } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
+
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import { useForm, Controller, set } from 'react-hook-form';
+import { useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { usePhoto } from '../../../hooks/usePhoto';
+import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
+import { PhotoProps } from '../../../hooks/usePhoto/types';
+
+interface FormProps {
+  name: string;
+  description: string;
+  price: string;
+}
+
+interface AdPreview extends FormProps {
+  photo: PhotoProps[];
+  productOptions: string[];
+  paymentOptions: string[];
+  acceptExchange: boolean;
+}
+
+const formSchema = yup.object({
+  name: yup.string().required('Digite o nome do produto'),
+  description: yup.string().required('Digite a descrição do produto'),
+  price: yup.string().required('Digite o preço do produto'),
+});
 
 export function CreateAd() {
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
@@ -37,9 +59,15 @@ export function CreateAd() {
   const { photo, photoError, photoIsLoading, savePhoto, removePhoto } =
     usePhoto({ isMultiplePhotos: true });
 
-  const { show } = useToast();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormProps>({
+    resolver: yupResolver(formSchema),
+  });
 
-  console.log(productOptions);
+  const { show } = useToast();
 
   function paymentOptionsSelect(payment: string) {
     setPaymentOptions([...payment]);
@@ -55,6 +83,26 @@ export function CreateAd() {
 
   function handleRemovePhoto(id: string) {
     removePhoto(id);
+  }
+
+  function createPreview({ name, description, price }: FormProps) {
+    const adPreview: AdPreview = {
+      name,
+      photo: photo,
+      description,
+      price,
+      productOptions,
+      paymentOptions,
+      acceptExchange,
+    };
+
+    if (
+      paymentOptions.length !== 0 ||
+      productOptions.length !== 0 ||
+      photo.length !== 0
+    ) {
+      console.log(adPreview);
+    }
   }
 
   useEffect(() => {
@@ -138,19 +186,47 @@ export function CreateAd() {
             Sobre o produto
           </Text>
 
-          <Input placeholder="Título do anúncio" mb="4" />
+          <Controller
+            control={control}
+            name="name"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Título do anúncio"
+                mb="4"
+                value={value}
+                isInvalid={!!errors.name}
+                errorMessage={errors.name?.message}
+                onChangeText={onChange}
+              />
+            )}
+          />
 
-          <Input
-            placeholder="Descrição do produto"
-            textAlignVertical="top"
-            numberOfLines={5}
-            mb="5"
+          <Controller
+            control={control}
+            name="description"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                value={value}
+                placeholder="Descrição do produto"
+                textAlignVertical="top"
+                numberOfLines={5}
+                mb="5"
+                isInvalid={!!errors.description}
+                errorMessage={errors.description?.message}
+                onChangeText={onChange}
+              />
+            )}
           />
 
           <InputRadio
             name="Product quality"
             radioInputOptions={['Produto novo', 'Produto usado']}
             selectRadioInputOption={productOptionsSelect}
+            isInvalid={
+              productOptions.length === 0 &&
+              !!(errors.description || errors.name || errors.price)
+            }
+            errorMessage="Selecione uma das opções"
           />
 
           <Text
@@ -163,11 +239,21 @@ export function CreateAd() {
             Venda
           </Text>
 
-          <Input
-            placeholder="Valor do produto"
-            mb="4"
-            defaultValue="R$"
-            keyboardType="number-pad"
+          <Controller
+            control={control}
+            name="price"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Valor do produto"
+                mb="4"
+                defaultValue="R$ "
+                keyboardType="number-pad"
+                value={value}
+                onChangeText={onChange}
+                isInvalid={!!errors.price}
+                errorMessage={errors.price?.message}
+              />
+            )}
           />
 
           <VStack justifyItems="start">
@@ -180,6 +266,7 @@ export function CreateAd() {
               alignSelf="flex-start"
               mb="4"
               colorScheme="lightBlue"
+              onChange={() => setAcceptExchange(!acceptExchange)}
             />
           </VStack>
 
@@ -197,6 +284,11 @@ export function CreateAd() {
             defaultValue={paymentOptions}
             selectOption={paymentOptionsSelect}
             mb={6}
+            isInvalid={
+              paymentOptions.length === 0 &&
+              !!(errors.description || errors.name || errors.price)
+            }
+            errorMessage="Selecione pelo menos um meio de pagamento"
           />
         </VStack>
       </ScrollView>
@@ -204,7 +296,11 @@ export function CreateAd() {
       <ZStack alignItems="center">
         <HStack bg="gray.700" flex={1} paddingX={6} paddingY={5}>
           <Button title="Cancelar" variant="terciary" mr="3" />
-          <Button title="Avançar" variant="secondary" />
+          <Button
+            title="Avançar"
+            variant="secondary"
+            onPress={handleSubmit(createPreview)}
+          />
         </HStack>
       </ZStack>
     </VStack>

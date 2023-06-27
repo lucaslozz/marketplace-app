@@ -6,7 +6,6 @@ import * as FileSystem from 'expo-file-system';
 import * as T from './types';
 
 import { AppError } from '../../utils/AppError';
-import { set } from 'react-hook-form';
 
 interface usePhotoProps {
   isMultiplePhotos?: boolean;
@@ -14,7 +13,7 @@ interface usePhotoProps {
 
 export function usePhoto({ isMultiplePhotos = false }: usePhotoProps) {
   const [photoIsLoading, setPhotoIsLoading] = useState(false);
-  const [photo, setPhoto] = useState<T.AvatarProps[]>([]);
+  const [photo, setPhoto] = useState<T.PhotoProps[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
 
   async function savePhoto() {

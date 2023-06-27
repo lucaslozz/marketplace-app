@@ -31,9 +31,9 @@ import { UserPhoto } from '../../../components/UserPhoto';
 import { Input } from '../../../components/Input';
 import { Button } from '../../../components/Button';
 import { usePhoto } from '../../../hooks/usePhoto';
+import { PhotoProps } from '../../../hooks/usePhoto/types';
 
 type SignUpFormData = {
-  photo?: AvatarProps;
   name: string;
   email: string;
   phone: string;
@@ -41,10 +41,12 @@ type SignUpFormData = {
   passwordConfirmation: string;
 };
 
-interface AvatarProps {
+interface UserBody {
+  photo: PhotoProps[];
   name: string;
-  uri: string;
-  type: string;
+  email: string;
+  phone: string;
+  password: string;
 }
 
 const signUpSchema = yup.object({
@@ -87,15 +89,9 @@ export function SignUp() {
     savePhoto();
   }
 
-  function handleSignUp({
-    photo,
-    name,
-    email,
-    phone,
-    password,
-  }: SignUpFormData) {
-    const body = { photo, name, email, phone, password };
-
+  function handleSignUp({ name, email, phone, password }: SignUpFormData) {
+    const body: UserBody = { photo, name, email, phone, password };
+    console.log(body);
     mutate(body);
   }
 
