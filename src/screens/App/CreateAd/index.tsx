@@ -88,7 +88,7 @@ export function CreateAd() {
   function createPreview({ name, description, price }: FormProps) {
     const adPreview: AdPreview = {
       name,
-      photo: photo,
+      photo,
       description,
       price,
       productOptions,
@@ -101,7 +101,7 @@ export function CreateAd() {
       productOptions.length !== 0 ||
       photo.length !== 0
     ) {
-      console.log(adPreview);
+      navigate('adpreview', { ...adPreview });
     }
   }
 

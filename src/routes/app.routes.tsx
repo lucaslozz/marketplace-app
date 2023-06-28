@@ -1,3 +1,5 @@
+import { PhotoProps } from '../hooks/usePhoto/types';
+import { AdPreview } from '../screens/App/AdPreview';
 import { CreateAd } from '../screens/App/CreateAd';
 import { TabRoutes } from './tab.routes';
 
@@ -9,6 +11,15 @@ import {
 export type AppRoutes = {
   hometab: undefined;
   createad: undefined;
+  adpreview: {
+    name: string;
+    photo: PhotoProps[];
+    description: string;
+    price: string;
+    productOptions: string[];
+    paymentOptions: string[];
+    acceptExchange: boolean;
+  };
 };
 
 export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>;
@@ -19,7 +30,8 @@ export function AppRoutes() {
   return (
     <Navigator screenOptions={{ headerShown: false }}>
       <Screen name="hometab" component={TabRoutes} />
-      {<Screen name="createad" component={CreateAd} />}
+      <Screen name="createad" component={CreateAd} />
+      <Screen name="adpreview" component={AdPreview} />
     </Navigator>
   );
 }
