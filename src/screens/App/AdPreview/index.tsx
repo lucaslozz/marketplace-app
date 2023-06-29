@@ -10,11 +10,12 @@ import {
   Text,
   VStack,
   ZStack,
+  useToast,
 } from 'native-base';
 import { UserPhoto } from '../../../components/UserPhoto';
 import { Button } from '../../../components/Button';
 import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { UserContext } from '../../../contexts/userContext/types';
 
 import avatarDefault from '../../../assets/avatarDefault.png';
@@ -25,6 +26,7 @@ import {
   BodyProducts,
   useCreateAdProducts,
 } from '../../../services/requests/products/useCreateAdProducts';
+import { AppError } from '../../../utils/AppError';
 
 type RouteParams = {
   name: string;
@@ -40,7 +42,9 @@ export function AdPreview() {
   const { params } = useRoute();
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
-  const { mutate, data } = useCreateAdProducts();
+  const { mutate, isLoading, error, isSuccess } = useCreateAdProducts();
+
+  const { show } = useToast();
 
   const { user } = useContext(UserContext);
 
@@ -71,6 +75,7 @@ export function AdPreview() {
       'Depósito Bancário': 'deposit',
     };
     const body: BodyProducts = {
+      photo,
       name,
       price: +price.replace('R$', '').trim(),
       description,
@@ -80,7 +85,29 @@ export function AdPreview() {
     };
 
     mutate(body);
+
+    if (isSuccess) {
+      show({
+        title: 'Anúncio criado com sucesso!',
+        placement: 'top',
+        bgColor: 'green.500',
+      });
+      navigate('hometab');
+    }
   }
+
+  useEffect(() => {
+    const isAppError = error instanceof AppError;
+    if (error) {
+      show({
+        title: isAppError
+          ? error.message
+          : 'Erro ao criar o anúncio. Tente mais tarde.',
+        placement: 'top',
+        bgColor: 'red.500',
+      });
+    }
+  }, [error]);
 
   return (
     <VStack paddingBottom="20">
@@ -195,6 +222,7 @@ export function AdPreview() {
             title="Publicar"
             variant="primary"
             onPress={() => handleCreateAd()}
+            isLoading={isLoading}
           />
         </HStack>
       </ZStack>

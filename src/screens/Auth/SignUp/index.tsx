@@ -32,6 +32,7 @@ import { Input } from '../../../components/Input';
 import { Button } from '../../../components/Button';
 import { usePhoto } from '../../../hooks/usePhoto';
 import { PhotoProps } from '../../../hooks/usePhoto/types';
+import { AppError } from '../../../utils/AppError';
 
 type SignUpFormData = {
   name: string;
@@ -70,7 +71,7 @@ export function SignUp() {
 
   const { photo, photoIsLoading, photoError, savePhoto } = usePhoto({});
 
-  const { mutate, isLoading, isError, error } = useSignUp();
+  const { mutate, isLoading, error, isSuccess } = useSignUp();
 
   const { show } = useToast();
 
@@ -98,18 +99,23 @@ export function SignUp() {
     };
 
     mutate(body);
-    show({
-      title: 'Usuario criado com sucesso!',
-      placement: 'top',
-      bgColor: 'green.500',
-    });
-    navigate('signIn');
+    if (isSuccess) {
+      show({
+        title: 'Usuario criado com sucesso!',
+        placement: 'top',
+        bgColor: 'green.500',
+      });
+      navigate('signIn');
+    }
   }
 
   useEffect(() => {
+    const isAppError = error instanceof AppError;
     if (error) {
       show({
-        title: isError ? 'Erro ao cadastrar' : 'Erro ao atualizar',
+        title: isAppError
+          ? error.message
+          : 'Erro ao criar o usuário. Tente mais tarde.',
         placement: 'top',
         bgColor: 'red.500',
       });

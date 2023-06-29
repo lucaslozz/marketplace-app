@@ -19,7 +19,7 @@ const fetchData = async (body: SignUpBody) => {
   formData.append('password', body.password);
 
   if (body.photo) {
-    formData.append('avatar', body.photo[0]);
+    formData.append('avatar', body.photo[0] as any);
   }
 
   await api.post('/users', formData, {

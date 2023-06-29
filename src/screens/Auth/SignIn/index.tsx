@@ -65,8 +65,6 @@ export function SignIn() {
     if (error) {
       const isAppError = error instanceof AppError;
 
-      console.log(error);
-
       const title = isAppError ? error.message : 'Por favor, tente mais tarde';
 
       show({
@@ -111,6 +109,9 @@ export function SignIn() {
           render={({ field: { onChange, value } }) => (
             <Input
               placeholder="E-mail"
+              type="email"
+              keyboardType="email-address"
+              autoCapitalize="none"
               mb="6"
               onChangeText={onChange}
               value={value}
@@ -141,6 +142,7 @@ export function SignIn() {
                 </Pressable>
               }
               placeholder="Password"
+              autoCapitalize="none"
               mb={8}
               onChangeText={onChange}
               value={value}
