@@ -79,7 +79,6 @@ export function SignUp() {
   const {
     control,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<SignUpFormData>({
     resolver: yupResolver(signUpSchema),
@@ -90,9 +89,21 @@ export function SignUp() {
   }
 
   function handleSignUp({ name, email, phone, password }: SignUpFormData) {
-    const body: UserBody = { photo, name, email, phone, password };
-    console.log(body);
+    const body: UserBody = {
+      photo,
+      name,
+      email,
+      phone,
+      password,
+    };
+
     mutate(body);
+    show({
+      title: 'Usuario criado com sucesso!',
+      placement: 'top',
+      bgColor: 'green.500',
+    });
+    navigate('signIn');
   }
 
   useEffect(() => {

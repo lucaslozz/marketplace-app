@@ -1,9 +1,9 @@
 import { PhotoProps } from '../../../hooks/usePhoto/types';
 import { api } from '../../api';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 interface SignUpBody {
-  photo: PhotoProps;
+  photo: PhotoProps[];
   name: string;
   email: string;
   phone: string;
@@ -12,22 +12,21 @@ interface SignUpBody {
 
 const fetchData = async (body: SignUpBody) => {
   const formData = new FormData();
-  if (body.photo) {
-    formData.append('avatar', String(body.photo));
-  }
 
   formData.append('name', body.name);
   formData.append('email', body.email);
-  formData.append('phone', body.phone);
+  formData.append('tel', body.phone);
   formData.append('password', body.password);
+
+  if (body.photo) {
+    formData.append('avatar', body.photo[0]);
+  }
 
   await api.post('/users', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-
-  console.log(formData);
 };
 
 export function useSignUp() {

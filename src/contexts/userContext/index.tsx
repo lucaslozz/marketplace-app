@@ -3,6 +3,7 @@ import { createContext, useEffect, useState } from 'react';
 import * as T from './types';
 import { getStorage, removeStorage, saveStorage } from '../../storage/storage';
 import { user_storage } from '../../storage/storageConfig';
+import { api } from '../../services/api';
 
 export function UserContextProvider({ children }: T.UserContextProviderProps) {
   const [user, setUser] = useState<T.UserData | null>(null);
@@ -11,7 +12,7 @@ export function UserContextProvider({ children }: T.UserContextProviderProps) {
   function saveUser(user: T.UserData) {
     try {
       setLoadingUser(true);
-
+      api.defaults.headers.common.Authorization = `Bearer ${user.token}`;
       setUser(user);
       saveStorage(user_storage, user);
     } catch (error) {

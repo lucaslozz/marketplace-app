@@ -17,7 +17,14 @@ import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
 import { useContext } from 'react';
 import { UserContext } from '../../../contexts/userContext/types';
 
+import avatarDefault from '../../../assets/avatarDefault.png';
+
 import { Ionicons } from '@expo/vector-icons';
+import { api } from '../../../services/api';
+import {
+  BodyProducts,
+  useCreateAdProducts,
+} from '../../../services/requests/products/useCreateAdProducts';
 
 type RouteParams = {
   name: string;
@@ -29,16 +36,11 @@ type RouteParams = {
   acceptExchange: boolean;
 };
 
-type IconsNames =
-  | 'Boleto'
-  | 'Pix'
-  | 'Dinheiro'
-  | 'Cartão de Crédito'
-  | 'Depósito Bancário';
-
 export function AdPreview() {
   const { params } = useRoute();
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
+
+  const { mutate, data } = useCreateAdProducts();
 
   const { user } = useContext(UserContext);
 
@@ -52,13 +54,33 @@ export function AdPreview() {
     paymentOptions,
   } = params as RouteParams;
 
-  const icons: Record<IconsNames, string> = {
+  const icons: Record<string, string> = {
     Boleto: 'barcode-sharp',
     Pix: 'qr-code-outline',
     Dinheiro: 'cash-outline',
     'Cartão de Crédito': 'card-outline',
     'Depósito Bancário': 'trending-up',
   };
+
+  function handleCreateAd() {
+    const payment: Record<string, string> = {
+      Boleto: 'boleto',
+      Pix: 'pix',
+      Dinheiro: 'cash',
+      'Cartão de Crédito': 'card',
+      'Depósito Bancário': 'deposit',
+    };
+    const body: BodyProducts = {
+      name,
+      price: +price.replace('R$', '').trim(),
+      description,
+      accept_trade: acceptExchange,
+      is_new: productOptions[0] === 'Produto novo' ? true : false,
+      payment_methods: paymentOptions.map((item) => payment[item]),
+    };
+
+    mutate(body);
+  }
 
   return (
     <VStack paddingBottom="20">
@@ -90,9 +112,13 @@ export function AdPreview() {
           <HStack space={2} mb={6}>
             <UserPhoto
               size={6}
-              source={{
-                uri: 'http://192.168.0.109:3333/images/61400221f2fe110b6964-WhatsApp%20Image%202023-06-05%20at%2016.32.37.jpeg',
-              }}
+              source={
+                user
+                  ? {
+                      uri: `${api.defaults.baseURL}/images/${user.user.avatar}`,
+                    }
+                  : avatarDefault
+              }
               alt="foto de perfil do usuário"
             />
             <Text color="gray.100" fontFamily="body" fontSize="sm">
@@ -131,9 +157,7 @@ export function AdPreview() {
 
           <Text fontFamily="heading" mb={4} color="gray.200">
             Aceita troca?
-            <Text fontFamily="body">
-              {acceptExchange ? ' Sim' : ' Não'}
-            </Text>{' '}
+            <Text fontFamily="body">{acceptExchange ? ' Sim' : ' Não'}</Text>
           </Text>
 
           <Text fontFamily="heading" color="gray.200" fontSize="sm" mb={2}>
@@ -142,7 +166,7 @@ export function AdPreview() {
 
           {paymentOptions.map((option) => {
             return (
-              <VStack mb={2}>
+              <VStack mb={2} key={option}>
                 <HStack space={2}>
                   <Icon
                     as={Ionicons}
@@ -167,7 +191,11 @@ export function AdPreview() {
             mr="3"
             onPress={() => navigate('createad')}
           />
-          <Button title="Publicar" variant="primary" onPress={() => {}} />
+          <Button
+            title="Publicar"
+            variant="primary"
+            onPress={() => handleCreateAd()}
+          />
         </HStack>
       </ZStack>
     </VStack>

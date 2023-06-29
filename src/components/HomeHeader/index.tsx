@@ -16,7 +16,7 @@ export function HomeHeader() {
           source={
             user
               ? {
-                  uri: 'http://192.168.0.109:3333/images/61400221f2fe110b6964-WhatsApp%20Image%202023-06-05%20at%2016.32.37.jpeg',
+                  uri: `${api.defaults.baseURL}/images/${user.user.avatar}`,
                 }
               : avatarDefault
           }

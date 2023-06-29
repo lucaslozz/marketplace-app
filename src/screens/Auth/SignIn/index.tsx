@@ -23,6 +23,7 @@ import { UserContext } from '../../../contexts/userContext/types';
 import { AppError } from '../../../utils/AppError';
 import { Input } from '../../../components/Input';
 import { Button } from '../../../components/Button';
+import { api } from '../../../services/api';
 
 type SignInFormData = {
   email: string;
@@ -51,7 +52,6 @@ export function SignIn() {
   const {
     control,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<SignInFormData>({
     resolver: yupResolver(signInSchema),
@@ -64,6 +64,8 @@ export function SignIn() {
   useEffect(() => {
     if (error) {
       const isAppError = error instanceof AppError;
+
+      console.log(error);
 
       const title = isAppError ? error.message : 'Por favor, tente mais tarde';
 
