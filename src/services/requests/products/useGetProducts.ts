@@ -34,8 +34,9 @@ interface ProductsRequest {
   query: string;
 }
 
-const fetchData = async (): AxiosPromise<ProductsResponse> => {
-  const response = await api.get<ProductsResponse>('/products/');
+const fetchData = async (): AxiosPromise<ProductsResponse[]> => {
+  const response = await api.get<ProductsResponse[]>('/products/');
+  console.log(response.data);
   return response;
 };
 

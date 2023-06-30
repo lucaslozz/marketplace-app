@@ -99,14 +99,6 @@ export function SignUp() {
     };
 
     mutate(body);
-    if (isSuccess) {
-      show({
-        title: 'Usuario criado com sucesso!',
-        placement: 'top',
-        bgColor: 'green.500',
-      });
-      navigate('signIn');
-    }
   }
 
   useEffect(() => {
@@ -131,6 +123,17 @@ export function SignUp() {
       });
     }
   }, [photoError]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      show({
+        title: 'Usuario criado com sucesso!',
+        placement: 'top',
+        bgColor: 'green.500',
+      });
+      navigate('signIn');
+    }
+  }, [isSuccess]);
 
   return (
     <ScrollView>

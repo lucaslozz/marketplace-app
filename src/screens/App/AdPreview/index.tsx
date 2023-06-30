@@ -85,15 +85,6 @@ export function AdPreview() {
     };
 
     mutate(body);
-
-    if (isSuccess) {
-      show({
-        title: 'Anúncio criado com sucesso!',
-        placement: 'top',
-        bgColor: 'green.500',
-      });
-      navigate('hometab');
-    }
   }
 
   useEffect(() => {
@@ -108,6 +99,17 @@ export function AdPreview() {
       });
     }
   }, [error]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      show({
+        title: 'Anúncio criado com sucesso!',
+        placement: 'top',
+        bgColor: 'green.500',
+      });
+      navigate('hometab');
+    }
+  }, [isSuccess]);
 
   return (
     <VStack paddingBottom="20">
