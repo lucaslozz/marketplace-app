@@ -295,7 +295,12 @@ export function CreateAd() {
 
       <ZStack alignItems="center">
         <HStack bg="gray.700" flex={1} paddingX={6} paddingY={5}>
-          <Button title="Cancelar" variant="terciary" mr="3" />
+          <Button
+            title="Cancelar"
+            variant="terciary"
+            mr="3"
+            onPress={() => navigate('hometab')}
+          />
           <Button
             title="Avançar"
             variant="secondary"
