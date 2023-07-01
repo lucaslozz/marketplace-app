@@ -87,6 +87,10 @@ export function AdPreview() {
     mutate(body);
   }
 
+  const photoPath = photo.map((item) => {
+    return item.uri;
+  });
+
   useEffect(() => {
     const isAppError = error instanceof AppError;
     if (error) {
@@ -111,6 +115,20 @@ export function AdPreview() {
     }
   }, [isSuccess]);
 
+  useEffect(() => {
+    if (error) {
+      const isAppError = error instanceof AppError;
+
+      const title = isAppError ? error.message : 'Por favor, tente mais tarde';
+
+      show({
+        title: title,
+        placement: 'top',
+        bgColor: 'red.500',
+      });
+    }
+  }, [error]);
+
   return (
     <VStack paddingBottom="20">
       <ScrollView showsVerticalScrollIndicator={false} pb={6}>
@@ -134,7 +152,7 @@ export function AdPreview() {
             <Text color="gray.700">É assim que seu produto vai aparecer!</Text>
           </Box>
 
-          <Slider photos={photo} />
+          <Slider photos={photoPath} />
         </VStack>
 
         <VStack mt={5} paddingX={6}>

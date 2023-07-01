@@ -1,4 +1,5 @@
 import { PhotoProps } from '../hooks/usePhoto/types';
+import { AdInfo } from '../screens/App/AdInfo';
 import { AdPreview } from '../screens/App/AdPreview';
 import { CreateAd } from '../screens/App/CreateAd';
 import { TabRoutes } from './tab.routes';
@@ -20,6 +21,9 @@ export type AppRoutes = {
     paymentOptions: string[];
     acceptExchange: boolean;
   };
+  adInfo: {
+    id: string;
+  };
 };
 
 export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutes>;
@@ -32,6 +36,7 @@ export function AppRoutes() {
       <Screen name="hometab" component={TabRoutes} />
       <Screen name="createad" component={CreateAd} />
       <Screen name="adpreview" component={AdPreview} />
+      <Screen name="adInfo" component={AdInfo} />
     </Navigator>
   );
 }

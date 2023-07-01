@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import { PhotoProps } from '../../hooks/usePhoto/types';
 
 interface SliderProps {
-  photos: PhotoProps[];
+  photos: string[];
 }
 
 export function Slider({ photos }: SliderProps) {
@@ -12,14 +12,15 @@ export function Slider({ photos }: SliderProps) {
     <View>
       <FlatList
         data={photos}
-        keyExtractor={(item) => item.uri}
+        keyExtractor={(item) => item}
         renderItem={({ item }) => {
           return (
             <Image
-              source={{ uri: item.uri }}
+              source={{ uri: item }}
               alt="Slider"
               width={width}
               height={280}
+              resizeMode="cover"
             />
           );
         }}

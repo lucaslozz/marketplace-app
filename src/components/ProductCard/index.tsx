@@ -1,9 +1,9 @@
 import { Box, HStack, Image, Text, VStack, ZStack } from 'native-base';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
 import { UserPhoto } from '../UserPhoto';
 import { api } from '../../services/api';
 
-interface ProductCardProps {
+interface ProductCardProps extends TouchableOpacityProps {
   src: string;
   avatarSrc: string;
   is_new: boolean;
@@ -19,10 +19,11 @@ export function ProductCard({
   price,
   avatarSrc,
   mb,
+  ...props
 }: ProductCardProps) {
   return (
     <VStack w={40} mb={mb}>
-      <TouchableOpacity>
+      <TouchableOpacity {...props}>
         <ZStack zIndex={2}>
           <HStack padding={1} space={20}>
             <UserPhoto

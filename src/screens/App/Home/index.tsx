@@ -75,8 +75,12 @@ export function Home() {
               is_new={product.item.is_new}
               price={product.item.price}
               mb={6}
+              onPress={() => {
+                navigate('adInfo', { ...product.item });
+              }}
             />
           )}
+          showsVerticalScrollIndicator={false}
         />
       </VStack>
     </VStack>
