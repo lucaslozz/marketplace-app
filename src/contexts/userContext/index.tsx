@@ -9,12 +9,12 @@ export function UserContextProvider({ children }: T.UserContextProviderProps) {
   const [user, setUser] = useState<T.UserData | null>(null);
   const [loadingUser, setLoadingUser] = useState(false);
 
-  function saveUser(user: T.UserData) {
+  async function saveUser(user: T.UserData) {
     try {
       setLoadingUser(true);
-      api.defaults.headers.common.Authorization = `Bearer ${user.token}`;
+      api.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
       setUser(user);
-      saveStorage(user_storage, user);
+      await saveStorage(user_storage, user);
     } catch (error) {
     } finally {
       setLoadingUser(false);
@@ -37,8 +37,11 @@ export function UserContextProvider({ children }: T.UserContextProviderProps) {
     async function fetchStoredUser() {
       try {
         setLoadingUser(true);
-        const storedUser = await getStorage(user_storage);
+        const storedUser: T.UserData = await getStorage(user_storage);
         if (storedUser) {
+          api.defaults.headers.common[
+            'Authorization'
+          ] = `Bearer ${storedUser.token}`;
           setUser(storedUser);
         }
       } catch (error) {

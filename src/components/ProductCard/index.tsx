@@ -1,22 +1,27 @@
 import { Box, HStack, Image, Text, VStack, ZStack } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import { UserPhoto } from '../UserPhoto';
-import { useContext } from 'react';
-import { UserContext } from '../../contexts/userContext/types';
 import { api } from '../../services/api';
 
 interface ProductCardProps {
   src: string;
+  avatarSrc: string;
   is_new: boolean;
   title: string;
   price: number;
+  mb: number;
 }
 
-export function ProductCard({ src, is_new, title, price }: ProductCardProps) {
-  const { user } = useContext(UserContext);
-
+export function ProductCard({
+  src,
+  is_new,
+  title,
+  price,
+  avatarSrc,
+  mb,
+}: ProductCardProps) {
   return (
-    <VStack w={40}>
+    <VStack w={40} mb={mb}>
       <TouchableOpacity>
         <ZStack zIndex={2}>
           <HStack padding={1} space={20}>
@@ -24,7 +29,7 @@ export function ProductCard({ src, is_new, title, price }: ProductCardProps) {
               size={6}
               alt="foto do usuário"
               source={{
-                uri: `${api.defaults.baseURL}/images/${user?.user.avatar}`,
+                uri: `${api.defaults.baseURL}/images/${avatarSrc}`,
               }}
             />
             <Box

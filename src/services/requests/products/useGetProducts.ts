@@ -36,7 +36,6 @@ interface ProductsRequest {
 
 const fetchData = async (): AxiosPromise<ProductsResponse[]> => {
   const response = await api.get<ProductsResponse[]>('/products/');
-  console.log(response.data);
   return response;
 };
 
@@ -44,6 +43,7 @@ export function useGetProducts() {
   const query = useQuery({
     queryFn: fetchData,
     queryKey: ['products'],
+    refetchInterval: 1000 * 60 * 5,
   });
 
   return {

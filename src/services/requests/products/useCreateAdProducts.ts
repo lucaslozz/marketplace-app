@@ -1,6 +1,6 @@
 import { AxiosPromise } from 'axios';
 import { api } from '../../api';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { PhotoProps } from '../../../hooks/usePhoto/types';
 
 export interface BodyProducts {
@@ -53,6 +53,8 @@ const fetchData = async ({
 };
 
 export function useCreateAdProducts() {
+  const queryClient = useQueryClient();
+  queryClient.invalidateQueries(['products']);
   const mutate = useMutation({
     mutationFn: fetchData,
   });

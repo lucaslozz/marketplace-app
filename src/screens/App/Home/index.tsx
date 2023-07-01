@@ -43,8 +43,6 @@ export function Home() {
   useFocusEffect(
     useCallback(() => {
       if (data) {
-        const productsData = data.map((obj) => [obj.values]);
-
         setProducts(data);
       }
     }, [data]),
@@ -62,18 +60,21 @@ export function Home() {
         />
       </HStack>
 
-      <VStack mt={6} space={6}>
+      <VStack mt={6}>
         <FlatList
           data={products}
           numColumns={2}
           keyExtractor={(product) => product.id}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
           renderItem={(product) => (
             <ProductCard
               key={product.item.id}
+              avatarSrc={product.item.user.avatar}
               src={`${api.defaults.baseURL}/images/${product.item.product_images[0].path}`}
               title={product.item.name}
               is_new={product.item.is_new}
               price={product.item.price}
+              mb={6}
             />
           )}
         />
