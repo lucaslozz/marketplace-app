@@ -38,7 +38,7 @@ export function Home() {
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
   const [products, setProducts] = useState<ProductsResponse[]>([]);
 
-  const { data } = useGetProducts();
+  const { data, isLoading } = useGetProducts();
 
   useFocusEffect(
     useCallback(() => {

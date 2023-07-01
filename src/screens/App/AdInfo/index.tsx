@@ -20,6 +20,8 @@ import { api } from '../../../services/api';
 import { useGetInfoProduct } from '../../../services/requests/products/useGetInfoProduct';
 import { Loading } from '../../../components/Loading';
 
+import * as Linking from 'expo-linking';
+
 interface PaymentMethod {
   key: string;
   name: string;
@@ -67,6 +69,12 @@ export function AdInfo() {
 
   if (isLoading) {
     return <Loading />;
+  }
+
+  function handleLinking() {
+    Linking.openURL(
+      `https://api.whatsapp.com/send?phone=55${data?.data.user.tel}&text=Olá! Eu gostaria de comprar ${data?.data.name} que você anunciou!`,
+    );
   }
 
   return (
@@ -185,7 +193,11 @@ export function AdInfo() {
               {!data?.data.price.toString().endsWith(',00') ? ',00' : ''}
             </Text>
           </Text>
-          <Button title="Entrar em contato" variant="primary" />
+          <Button
+            title="Entrar em contato"
+            variant="primary"
+            onPress={() => handleLinking()}
+          />
         </HStack>
       </ZStack>
     </VStack>
