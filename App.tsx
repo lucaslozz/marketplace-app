@@ -13,6 +13,7 @@ import { Routes } from './src/routes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { UserContextProvider } from './src/contexts/userContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
@@ -27,7 +28,9 @@ export default function App() {
             backgroundColor="transparent"
             barStyle={'dark-content'}
           />
-          {fontsLoaded ? <Routes /> : <Loading />}
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            {fontsLoaded ? <Routes /> : <Loading />}
+          </GestureHandlerRootView>
         </UserContextProvider>
       </NativeBaseProvider>
     </QueryClientProvider>

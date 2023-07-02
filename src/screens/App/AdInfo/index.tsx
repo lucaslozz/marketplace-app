@@ -80,13 +80,7 @@ export function AdInfo() {
   return (
     <VStack paddingBottom="20">
       <ScrollView showsVerticalScrollIndicator={false} pb={6}>
-        <Box
-          w="full"
-          paddingTop={16}
-          paddingBottom={4}
-          bg="gray.700"
-          paddingX={6}
-        >
+        <Box w="full" paddingTop={16} paddingBottom={4} bg="white" paddingX={6}>
           <Icon
             as={AntDesign}
             name="arrowleft"
@@ -95,7 +89,7 @@ export function AdInfo() {
             onPress={() => navigate('hometab')}
           />
         </Box>
-        <VStack bg="gray.600">
+        <VStack bg="gray.600" borderTopWidth={1} borderTopColor="gray.700">
           <Slider photos={photoPath ?? []} />
         </VStack>
 
