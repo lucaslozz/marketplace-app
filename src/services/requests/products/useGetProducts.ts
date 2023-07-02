@@ -34,20 +34,32 @@ interface ProductsRequest {
   query: string;
 }
 
-const fetchData = async (): AxiosPromise<ProductsResponse[]> => {
-  const response = await api.get<ProductsResponse[]>('/products/');
-  return response;
+const fetchData = async (
+  query: string,
+  accept_trade: string,
+): AxiosPromise<ProductsResponse[]> => {
+  if (accept_trade) {
+    const response = await api.get<ProductsResponse[]>(
+      `/products?query=${query}&accept_trade=${accept_trade}`,
+    );
+
+    return response;
+  } else {
+    const response = await api.get<ProductsResponse[]>(
+      `/products?query=${query}`,
+    );
+
+    return response;
+  }
 };
 
-export function useGetProducts() {
-  const query = useQuery({
-    queryFn: fetchData,
-    queryKey: ['products'],
-    refetchInterval: 1000 * 60 * 5,
-  });
+export function useGetProducts(query: string, accept_trade: string) {
+  const { data } = useQuery(['products', query, accept_trade], () =>
+    fetchData(query, accept_trade),
+  );
 
   return {
-    ...query,
-    data: query.data?.data,
+    ...data,
+    data: data?.data,
   };
 }

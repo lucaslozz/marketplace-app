@@ -1,13 +1,17 @@
-import { Box, FlatList, HStack, VStack, View } from 'native-base';
+import { FlatList, HStack, Icon, Text, VStack, View } from 'native-base';
 
 import { HomeHeader } from '../../../components/HomeHeader';
 import { Button } from '../../../components/Button';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
 import { ProductCard } from '../../../components/ProductCard';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useGetProducts } from '../../../services/requests/products/useGetProducts';
 import { api } from '../../../services/api';
+import { Input } from '../../../components/Input';
+import { Pressable } from 'react-native';
+
+import { MaterialIcons } from '@expo/vector-icons';
 
 interface PaymentMethod {
   key: string;
@@ -35,18 +39,12 @@ interface ProductsResponse {
 }
 
 export function Home() {
+  const [searchParams, setSearchParams] = useState<string[]>([]);
+  const { data } = useGetProducts('', '');
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
-  const [products, setProducts] = useState<ProductsResponse[]>([]);
 
-  const { data, isLoading } = useGetProducts();
+  function handleSearch() {}
 
-  useFocusEffect(
-    useCallback(() => {
-      if (data) {
-        setProducts(data);
-      }
-    }, [data]),
-  );
   return (
     <VStack paddingY={16} marginX={6}>
       <HStack>
@@ -61,8 +59,35 @@ export function Home() {
       </HStack>
 
       <VStack mt={6}>
+        <Input
+          placeholder="Buscar anúncio"
+          mb={6}
+          InputRightElement={
+            <HStack mr={4} alignItems="center">
+              <Pressable key="search" onPress={() => console.log('search')}>
+                <Icon
+                  as={MaterialIcons}
+                  name="search"
+                  size={5}
+                  color="gray.200"
+                />
+              </Pressable>
+              <Text key="bar" color="gray.400" fontSize="lg" mr={3} ml={3}>
+                |
+              </Text>
+              <Pressable key="filter" onPress={() => console.log('filter')}>
+                <Icon
+                  as={MaterialIcons}
+                  name="filter-center-focus"
+                  size={5}
+                  color="gray.200"
+                />
+              </Pressable>
+            </HStack>
+          }
+        />
         <FlatList
-          data={products}
+          data={data}
           numColumns={2}
           keyExtractor={(product) => product.id}
           columnWrapperStyle={{ justifyContent: 'space-between' }}
