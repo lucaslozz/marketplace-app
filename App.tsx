@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { UserContextProvider } from './src/contexts/userContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
@@ -28,9 +29,11 @@ export default function App() {
             backgroundColor="transparent"
             barStyle={'dark-content'}
           />
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            {fontsLoaded ? <Routes /> : <Loading />}
-          </GestureHandlerRootView>
+          <BottomSheetModalProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              {fontsLoaded ? <Routes /> : <Loading />}
+            </GestureHandlerRootView>
+          </BottomSheetModalProvider>
         </UserContextProvider>
       </NativeBaseProvider>
     </QueryClientProvider>

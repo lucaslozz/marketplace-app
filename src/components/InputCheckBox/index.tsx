@@ -7,11 +7,13 @@ import {
 
 interface InputCheckBoxProps extends ICheckboxGroupProps {
   inputOptions: string[];
-  isInvalid: boolean;
-  errorMessage: string;
+  isInvalid?: boolean;
+  errorMessage?: string;
 
   selectOption: (value: string) => void;
 }
+
+import React from 'react';
 
 export function InputCheckBox({
   inputOptions,
@@ -20,14 +22,18 @@ export function InputCheckBox({
   errorMessage,
   ...props
 }: InputCheckBoxProps) {
+  const handleChange = () => {
+    return (values: any) => {
+      selectOption(values || '');
+    };
+  };
+
   return (
     <FormControl isInvalid={isInvalid}>
       <Checkbox.Group
         colorScheme="lightBlue"
         accessibilityLabel="choose multiple items"
-        onChange={(values) => {
-          selectOption(values || '');
-        }}
+        onChange={handleChange()}
         alignItems="flex-start"
         {...props}
       >

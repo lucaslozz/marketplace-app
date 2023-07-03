@@ -3,6 +3,7 @@ import { AdInfo } from '../screens/App/AdInfo';
 import { AdPreview } from '../screens/App/AdPreview';
 import { CreateAd } from '../screens/App/CreateAd';
 import { TabRoutes } from './tab.routes';
+import { PortalProvider } from '@gorhom/portal';
 
 import {
   NativeStackNavigationProp,
@@ -32,11 +33,13 @@ const { Navigator, Screen } = createNativeStackNavigator<AppRoutes>();
 
 export function AppRoutes() {
   return (
-    <Navigator screenOptions={{ headerShown: false }}>
-      <Screen name="hometab" component={TabRoutes} />
-      <Screen name="createad" component={CreateAd} />
-      <Screen name="adpreview" component={AdPreview} />
-      <Screen name="adInfo" component={AdInfo} />
-    </Navigator>
+    <PortalProvider>
+      <Navigator screenOptions={{ headerShown: false }}>
+        <Screen name="hometab" component={TabRoutes} />
+        <Screen name="createad" component={CreateAd} />
+        <Screen name="adpreview" component={AdPreview} />
+        <Screen name="adInfo" component={AdInfo} />
+      </Navigator>
+    </PortalProvider>
   );
 }

@@ -8,7 +8,8 @@ import {
 
 interface InputRadioProps extends IRadioGroupProps {
   radioInputOptions: string[];
-  errorMessage: string;
+  errorMessage?: string;
+  isInvalid?: boolean;
   selectRadioInputOption: (value: string) => void;
 }
 
