@@ -24,7 +24,7 @@ export function InputRadio({
     <FormControl isInvalid={isInvalid}>
       <Radio.Group
         onChange={(value) => {
-          selectRadioInputOption(value || '');
+          selectRadioInputOption(value);
         }}
         {...props}
       >

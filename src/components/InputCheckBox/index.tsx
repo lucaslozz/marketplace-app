@@ -13,8 +13,6 @@ interface InputCheckBoxProps extends ICheckboxGroupProps {
   selectOption: (value: string) => void;
 }
 
-import React from 'react';
-
 export function InputCheckBox({
   inputOptions,
   selectOption,

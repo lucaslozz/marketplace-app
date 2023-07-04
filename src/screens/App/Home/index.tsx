@@ -4,7 +4,6 @@ import {
   HStack,
   Icon,
   Radio,
-  Switch,
   Text,
   VStack,
   View,
@@ -20,7 +19,7 @@ import { useCallback, useRef, useState } from 'react';
 import { useGetProducts } from '../../../services/requests/products/useGetProducts';
 import { api } from '../../../services/api';
 import { Input } from '../../../components/Input';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Switch } from 'react-native';
 
 import { MaterialIcons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
@@ -53,19 +52,21 @@ interface ProductsResponse {
   user: User;
 }
 
-export function Home() {
-  const [searchParams, setSearchParams] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [products, setProducts] = useState<ProductsResponse[]>([]);
+type ProductQuality = 'true' | 'false' | 'disabled';
 
-  const [productOptions, setProductOptions] = useState<string[]>([]);
-  const [paymentOptions, setPaymentOptions] = useState<string[]>([]);
+export function Home() {
   const [acceptExchange, setAcceptExchange] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [paymentOptions, setPaymentOptions] = useState<string[]>([]);
+  const [isNew, setIsNew] = useState<ProductQuality>('disabled');
 
   const { data } = useGetProducts('', '');
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
   const sheetRef = useRef<BottomSheet>(null);
+
+  const { colors } = useTheme();
 
   const handleOpenModal = useCallback(() => {
     sheetRef.current?.expand();
@@ -76,11 +77,32 @@ export function Home() {
     setPaymentOptions([...payment]);
   }
 
-  function productOptionsSelect(optionSelected: string) {
-    setProductOptions([optionSelected]);
+  function handleSearch() {
+    const payment: Record<string, string> = {
+      Boleto: 'boleto',
+      Pix: 'pix',
+      Dinheiro: 'cash',
+      'Cartão de Crédito': 'card',
+      'Depósito Bancário': 'deposit',
+    };
+
+    const dataWithFilters = {
+      is_new: isNew,
+      accept_trade: String(acceptExchange),
+      payment_methods: paymentOptions.map((item) => payment[item]),
+    };
+
+    console.log(dataWithFilters);
   }
 
-  function handleSearch() {}
+  function handleCleanFilter() {
+    setIsNew('disabled');
+    setPaymentOptions([]);
+    setAcceptExchange(false);
+
+    sheetRef.current?.close();
+    setIsModalOpen(false);
+  }
 
   return (
     <View flex={1}>
@@ -122,6 +144,7 @@ export function Home() {
                 <TouchableOpacity
                   key="filter"
                   onPress={() => handleOpenModal()}
+                  disabled={isModalOpen}
                 >
                   <Box paddingLeft={3}>
                     <Icon
@@ -171,31 +194,83 @@ export function Home() {
             style={{
               paddingHorizontal: 24,
               paddingVertical: 24,
+              flex: 1,
+              justifyContent: 'space-between',
             }}
           >
             <VStack>
-              <Text color="gray.200" fontSize={20} fontFamily="heading" mb={6}>
+              <Text color="gray.200" fontSize={20} fontFamily="heading" mb={3}>
                 Filtrar Anúncios
               </Text>
-              <InputRadio
-                name="condition"
-                selectRadioInputOption={productOptionsSelect}
-                radioInputOptions={['NOVO', 'USADO']}
-              />
               <Text color="gray.200" fontSize="md" my={2} fontFamily="heading">
                 Condição
               </Text>
+
+              <HStack space={2}>
+                <Box
+                  bgColor={`${isNew === 'true' ? 'lightBlue.100' : 'gray.500'}`}
+                  mb={2}
+                  rounded="full"
+                  alignItems="center"
+                  justifyContent="center"
+                  w={76}
+                  h={8}
+                >
+                  <TouchableOpacity onPress={() => setIsNew('true')}>
+                    <Text
+                      fontFamily="heading"
+                      fontSize="xs"
+                      color={`${isNew === 'true' ? 'white' : 'gray.300'}`}
+                    >
+                      NOVO
+                    </Text>
+                  </TouchableOpacity>
+                </Box>
+                <Box
+                  bgColor={`${
+                    isNew === 'true'
+                      ? 'gray.500'
+                      : `${isNew === 'false' ? 'lightBlue.100' : 'gray.500'}`
+                  }`}
+                  mb={2}
+                  rounded="full"
+                  alignItems="center"
+                  justifyContent="center"
+                  w={76}
+                  h={8}
+                >
+                  <TouchableOpacity onPress={() => setIsNew('false')}>
+                    <Text
+                      fontFamily="heading"
+                      fontSize="xs"
+                      color={`${
+                        isNew === 'true'
+                          ? 'gray.300'
+                          : `${isNew === 'false' ? 'white' : 'gray.300'}`
+                      }`}
+                    >
+                      USADO
+                    </Text>
+                  </TouchableOpacity>
+                </Box>
+              </HStack>
+
               <Text color="gray.200" fontSize="md" my={2} fontFamily="heading">
                 Aceita troca?
               </Text>
 
               <Switch
-                size="lg"
-                alignSelf="flex-start"
-                mb="4"
-                colorScheme="lightBlue"
-                onChange={() => setAcceptExchange(!acceptExchange)}
+                trackColor={{
+                  false: `${colors.gray[500]}`,
+                  true: `${colors.lightBlue[100]}`,
+                }}
+                thumbColor={`${colors.gray[700]}`}
+                focusable={false}
+                style={{ alignSelf: 'flex-start' }}
+                value={acceptExchange}
+                onValueChange={(value) => setAcceptExchange(value)}
               />
+
               <Text color="gray.200" fontSize={16} my={2} fontFamily="heading">
                 Meios de pagamento aceitos
               </Text>
@@ -207,10 +282,24 @@ export function Home() {
                   'Cartão de Crédito',
                   'Depósito Bancário',
                 ]}
-                defaultValue={paymentOptions}
+                value={paymentOptions}
                 selectOption={paymentOptionsSelect}
               />
             </VStack>
+
+            <HStack mb={8}>
+              <Button
+                title="Resetar filtros"
+                variant="terciary"
+                mr="3"
+                onPress={handleCleanFilter}
+              />
+              <Button
+                title="Aplicar filtros"
+                variant="secondary"
+                onPress={() => handleSearch()}
+              />
+            </HStack>
           </BottomSheetView>
         </BottomSheet>
         <PortalHost name="custom_host" />
