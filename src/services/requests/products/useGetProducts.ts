@@ -27,30 +27,55 @@ interface ProductsResponse {
   user: User;
 }
 
-interface ProductsRequest {
+interface SearchParamsProps {
+  query: string;
   is_new: string;
   accept_trade: string;
   payment_methods: string[];
-  query: string;
 }
 
 const fetchData = async (
   query: string,
-  accept_trade?: string,
+  accept_trade: string,
+  is_new: string,
+  payment_methods: string[],
 ): AxiosPromise<ProductsResponse[]> => {
-  const response = await api.get<ProductsResponse[]>(
-    `/products?query=${query}&accept_trade${accept_trade}`,
+  const paymentMethodQuery = payment_methods?.reduce(
+    (query, method) => query + `&payment_method=${method}`,
+    '',
   );
-  return response;
+
+  if (payment_methods.length > 0) {
+    const response = await api.get<ProductsResponse[]>(
+      `/products?query=${query}${
+        accept_trade ? `&accept_trade=${accept_trade}` : ''
+      }${is_new ? `&is_new=${is_new}` : ''}${
+        payment_methods?.length > 0 && paymentMethodQuery
+      }`,
+    );
+    return response;
+  } else {
+    const response = await api.get<ProductsResponse[]>(
+      `/products?query=${query}${
+        accept_trade ? `&accept_trade=${accept_trade}` : ''
+      }${is_new ? `&is_new=${is_new}` : ''}`,
+    );
+    return response;
+  }
 };
 
-export function useGetProducts(query: string, accept_trade?: string) {
-  const { data } = useQuery(['products', query, accept_trade], () =>
-    fetchData(query, accept_trade),
+export function useGetProducts({
+  query,
+  accept_trade,
+  is_new,
+  payment_methods,
+}: SearchParamsProps) {
+  const result = useQuery(
+    ['products', query, accept_trade, is_new, payment_methods],
+    () => fetchData(query, accept_trade, is_new, payment_methods),
   );
 
   return {
-    ...data,
-    data: data?.data,
+    ...result,
   };
 }

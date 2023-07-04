@@ -1,9 +1,9 @@
 import {
   Box,
+  Center,
   FlatList,
   HStack,
   Icon,
-  Radio,
   Text,
   VStack,
   View,
@@ -24,44 +24,36 @@ import { TouchableOpacity, Switch } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { InputCheckBox } from '../../../components/InputCheckBox';
-import { InputRadio } from '../../../components/InputRadio';
 import { Portal, PortalHost } from '@gorhom/portal';
-
-interface PaymentMethod {
-  key: string;
-  name: string;
-}
-
-interface User {
-  avatar: string;
-}
-
-interface ProductImage {
-  path: string;
-  id: string;
-}
-
-interface ProductsResponse {
-  id: string;
-  name: string;
-  price: number;
-  is_new: boolean;
-  accept_trade: boolean;
-  product_images: ProductImage[];
-  payment_methods: PaymentMethod[];
-  user: User;
-}
+import { Loading } from '../../../components/Loading';
 
 type ProductQuality = 'true' | 'false' | 'disabled';
 
+interface SearchParamsProps {
+  query: string;
+  is_new: string;
+  accept_trade: string;
+  payment_methods: string[];
+}
+
+const InitialParamsToSearch = {
+  query: '',
+  accept_trade: '',
+  is_new: '',
+  payment_methods: [],
+};
+
 export function Home() {
+  const [paramsToSearch, setParamsToSearch] = useState<SearchParamsProps>(
+    InitialParamsToSearch,
+  );
   const [acceptExchange, setAcceptExchange] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [paymentOptions, setPaymentOptions] = useState<string[]>([]);
+  const [query, setQuery] = useState('');
   const [isNew, setIsNew] = useState<ProductQuality>('disabled');
 
-  const { data } = useGetProducts('', '');
+  const { data, isFetching } = useGetProducts(paramsToSearch);
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
   const sheetRef = useRef<BottomSheet>(null);
@@ -78,6 +70,16 @@ export function Home() {
   }
 
   function handleSearch() {
+    const dataToSearch: SearchParamsProps = {
+      query,
+      accept_trade: '',
+      is_new: '',
+      payment_methods: [],
+    };
+    setParamsToSearch(dataToSearch);
+  }
+
+  function handleSearchWithFilters() {
     const payment: Record<string, string> = {
       Boleto: 'boleto',
       Pix: 'pix',
@@ -86,13 +88,15 @@ export function Home() {
       'Depósito Bancário': 'deposit',
     };
 
-    const dataWithFilters = {
-      is_new: isNew,
+    const dataWithFilters: SearchParamsProps = {
+      query: query,
+      is_new: isNew !== 'disabled' ? isNew : '',
       accept_trade: String(acceptExchange),
       payment_methods: paymentOptions.map((item) => payment[item]),
     };
 
-    console.log(dataWithFilters);
+    setParamsToSearch(dataWithFilters);
+    sheetRef.current?.close();
   }
 
   function handleCleanFilter() {
@@ -102,11 +106,12 @@ export function Home() {
 
     sheetRef.current?.close();
     setIsModalOpen(false);
+    setParamsToSearch(InitialParamsToSearch);
   }
 
   return (
     <View flex={1}>
-      <VStack paddingY={16} marginX={6}>
+      <VStack paddingY={16} marginX={6} flex={1}>
         <HStack>
           <HomeHeader />
           <Button
@@ -118,16 +123,21 @@ export function Home() {
           />
         </HStack>
 
-        <VStack mt={6}>
+        <VStack mt={6} flex={1}>
+          <Text mb={3} color="gray.300" fontFamily="body" fontSize="sm">
+            Compre produtos variados
+          </Text>
           <Input
             placeholder="Buscar anúncio"
             mb={6}
             isReadOnly={isModalOpen}
+            onChangeText={(text) => setQuery(text)}
             InputRightElement={
               <HStack mr={4} alignItems="center">
                 <TouchableOpacity
                   key="search"
-                  onPress={() => console.log('search')}
+                  disabled={isFetching}
+                  onPress={() => handleSearch()}
                 >
                   <Box paddingRight={3}>
                     <Icon
@@ -144,7 +154,7 @@ export function Home() {
                 <TouchableOpacity
                   key="filter"
                   onPress={() => handleOpenModal()}
-                  disabled={isModalOpen}
+                  disabled={isModalOpen || isFetching}
                 >
                   <Box paddingLeft={3}>
                     <Icon
@@ -158,27 +168,31 @@ export function Home() {
               </HStack>
             }
           />
-          <FlatList
-            data={data}
-            numColumns={2}
-            keyExtractor={(product) => product.id}
-            columnWrapperStyle={{ justifyContent: 'space-between' }}
-            renderItem={(product) => (
-              <ProductCard
-                key={product.item.id}
-                avatarSrc={product.item.user.avatar}
-                src={`${api.defaults.baseURL}/images/${product.item.product_images[0].path}`}
-                title={product.item.name}
-                is_new={product.item.is_new}
-                price={product.item.price}
-                mb={6}
-                onPress={() => {
-                  navigate('adInfo', { ...product.item });
-                }}
-              />
-            )}
-            showsVerticalScrollIndicator={false}
-          />
+          {isFetching ? (
+            <Loading />
+          ) : (
+            <FlatList
+              data={data?.data}
+              numColumns={2}
+              keyExtractor={(product) => product.id}
+              columnWrapperStyle={{ justifyContent: 'space-between' }}
+              renderItem={(product) => (
+                <ProductCard
+                  key={product.item.id}
+                  avatarSrc={product.item.user.avatar}
+                  src={`${api.defaults.baseURL}/images/${product.item.product_images[0].path}`}
+                  title={product.item.name}
+                  is_new={product.item.is_new}
+                  price={product.item.price}
+                  mb={6}
+                  onPress={() => {
+                    navigate('adInfo', { ...product.item });
+                  }}
+                />
+              )}
+              showsVerticalScrollIndicator={false}
+            />
+          )}
         </VStack>
       </VStack>
 
@@ -297,7 +311,7 @@ export function Home() {
               <Button
                 title="Aplicar filtros"
                 variant="secondary"
-                onPress={() => handleSearch()}
+                onPress={() => handleSearchWithFilters()}
               />
             </HStack>
           </BottomSheetView>
