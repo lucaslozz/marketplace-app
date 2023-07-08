@@ -4,12 +4,19 @@ import {
   FormControl,
   WarningOutlineIcon,
 } from 'native-base';
+import { RefObject } from 'react';
+import { TextInput } from 'react-native';
 
 interface InputProps extends IInputProps {
   errorMessage?: string;
 }
 
-export function Input({ errorMessage, isInvalid, ...props }: InputProps) {
+export function Input({
+  errorMessage,
+  isInvalid,
+  inputRef,
+  ...props
+}: InputProps) {
   return (
     <FormControl isInvalid={isInvalid}>
       <NativeBaseInput
