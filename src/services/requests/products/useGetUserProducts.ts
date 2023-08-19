@@ -7,12 +7,6 @@ interface PaymentMethod {
   name: string;
 }
 
-interface User {
-  name: string;
-  tel: string;
-  avatar: string;
-}
-
 interface ProductImage {
   path: string;
   id: string;
@@ -33,8 +27,8 @@ interface UserProductsResponse {
   payment_methods: PaymentMethod[];
 }
 
-const fetchData = async (): AxiosPromise<UserProductsResponse> => {
-  const response = await api.get<UserProductsResponse>('/users/products');
+const fetchData = async (): AxiosPromise<UserProductsResponse[]> => {
+  const response = await api.get<UserProductsResponse[]>('/users/products');
   return response;
 };
 

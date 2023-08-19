@@ -27,6 +27,8 @@ import { InputCheckBox } from '../../../components/InputCheckBox';
 import { Portal, PortalHost } from '@gorhom/portal';
 import { Loading } from '../../../components/Loading';
 import { TabNavigatorRoutesProps } from '../../../routes/tab.routes';
+import { useFilterStore } from '../../../stores/useFilterStore/useFilterStore';
+import { IsNewToggle } from './components/IsNewToggle';
 
 type ProductQuality = 'true' | 'false' | 'disabled';
 
@@ -52,7 +54,8 @@ export function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentOptions, setPaymentOptions] = useState<string[]>([]);
   const [query, setQuery] = useState('');
-  const [isNew, setIsNew] = useState<ProductQuality>('disabled');
+
+  // const { isNew, setIsNew } = useFilterStore();
 
   const { data, isFetching } = useGetProducts(paramsToSearch);
   const navigation = useNavigation<AppNavigatorRoutesProps>();
@@ -266,54 +269,7 @@ export function Home() {
                 Condição
               </Text>
 
-              <HStack space={2}>
-                <Box
-                  bgColor={`${isNew === 'true' ? 'lightBlue.100' : 'gray.500'}`}
-                  mb={2}
-                  rounded="full"
-                  alignItems="center"
-                  justifyContent="center"
-                  w={76}
-                  h={8}
-                >
-                  <TouchableOpacity onPress={() => setIsNew('true')}>
-                    <Text
-                      fontFamily="heading"
-                      fontSize="xs"
-                      color={`${isNew === 'true' ? 'white' : 'gray.300'}`}
-                    >
-                      NOVO
-                    </Text>
-                  </TouchableOpacity>
-                </Box>
-                <Box
-                  bgColor={`${
-                    isNew === 'true'
-                      ? 'gray.500'
-                      : `${isNew === 'false' ? 'lightBlue.100' : 'gray.500'}`
-                  }`}
-                  mb={2}
-                  rounded="full"
-                  alignItems="center"
-                  justifyContent="center"
-                  w={76}
-                  h={8}
-                >
-                  <TouchableOpacity onPress={() => setIsNew('false')}>
-                    <Text
-                      fontFamily="heading"
-                      fontSize="xs"
-                      color={`${
-                        isNew === 'true'
-                          ? 'gray.300'
-                          : `${isNew === 'false' ? 'white' : 'gray.300'}`
-                      }`}
-                    >
-                      USADO
-                    </Text>
-                  </TouchableOpacity>
-                </Box>
-              </HStack>
+              <IsNewToggle />
 
               <Text color="gray.200" fontSize="md" my={2} fontFamily="heading">
                 Aceita troca?

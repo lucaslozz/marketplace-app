@@ -17,14 +17,14 @@ type User = {
   updated_at: Date;
 };
 
-interface SignUpResponse {
+interface UserData {
   token: string;
   user: User;
   'refresh-token': string;
 }
 
-const fetchData = async (body: SignUpBody): AxiosPromise<SignUpResponse> => {
-  const response = await api.post<SignUpResponse>('/sessions/', body);
+const fetchData = async (body: SignUpBody): AxiosPromise<UserData> => {
+  const response = await api.post<UserData>('/sessions/', body);
   return response;
 };
 

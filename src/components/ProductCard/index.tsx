@@ -5,7 +5,7 @@ import { api } from '../../services/api';
 
 interface ProductCardProps extends TouchableOpacityProps {
   src: string;
-  avatarSrc: string;
+  avatarSrc?: string;
   is_new: boolean;
   title: string;
   price: number;
@@ -26,13 +26,15 @@ export function ProductCard({
       <TouchableOpacity {...props}>
         <ZStack zIndex={2}>
           <HStack padding={1} space={20}>
-            <UserPhoto
-              size={6}
-              alt="foto do usuário"
-              source={{
-                uri: `${api.defaults.baseURL}/images/${avatarSrc}`,
-              }}
-            />
+            {avatarSrc && (
+              <UserPhoto
+                size={6}
+                alt="foto do usuário"
+                source={{
+                  uri: `${api.defaults.baseURL}/images/${avatarSrc}`,
+                }}
+              />
+            )}
             <Box
               bgColor={`${is_new ? 'blue.100' : 'gray.200'}`}
               mb={2}

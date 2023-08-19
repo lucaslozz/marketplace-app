@@ -24,6 +24,8 @@ import { AppError } from '../../../utils/AppError';
 import { Input } from '../../../components/Input';
 import { Button } from '../../../components/Button';
 import { api } from '../../../services/api';
+import { useAppDispatch } from '../../../store';
+import { save } from '../../../store/slices/user';
 
 type SignInFormData = {
   email: string;
@@ -43,11 +45,13 @@ export function SignIn() {
 
   const { navigate } = useNavigation<AuthNavigatorRoutesProps>();
 
-  const { mutate, data, error, isLoading } = useLogin();
+  const { mutate, data, error, isLoading, isSuccess } = useLogin();
 
   const { saveUser } = useContext(UserContext);
 
   const { show } = useToast();
+
+  const dispatch = useAppDispatch();
 
   const {
     control,
@@ -78,8 +82,9 @@ export function SignIn() {
   useEffect(() => {
     if (data?.data) {
       saveUser(data.data);
+      dispatch(save({ ...data.data, isLoading: false }));
     }
-  }, [data?.data]);
+  }, [isSuccess]);
 
   return (
     <ScrollView>

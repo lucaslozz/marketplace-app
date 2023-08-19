@@ -7,6 +7,7 @@ import { api } from '../../services/api';
 
 export function UserContextProvider({ children }: T.UserContextProviderProps) {
   const [user, setUser] = useState<T.UserData | null>(null);
+
   const [loadingUser, setLoadingUser] = useState(false);
 
   async function saveUser(user: T.UserData) {
@@ -33,24 +34,24 @@ export function UserContextProvider({ children }: T.UserContextProviderProps) {
     }
   }
 
-  useEffect(() => {
-    async function fetchStoredUser() {
-      try {
-        setLoadingUser(true);
-        const storedUser: T.UserData = await getStorage(user_storage);
-        if (storedUser) {
-          api.defaults.headers.common[
-            'Authorization'
-          ] = `Bearer ${storedUser.token}`;
-          setUser(storedUser);
-        }
-      } catch (error) {
-        throw error;
-      } finally {
-        setLoadingUser(false);
+  async function fetchStoredUser() {
+    try {
+      setLoadingUser(true);
+      const storedUser: T.UserData = await getStorage(user_storage);
+      if (storedUser) {
+        api.defaults.headers.common[
+          'Authorization'
+        ] = `Bearer ${storedUser.token}`;
+        setUser(storedUser);
       }
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoadingUser(false);
     }
+  }
 
+  useEffect(() => {
     fetchStoredUser();
   }, []);
 
