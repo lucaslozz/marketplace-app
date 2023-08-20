@@ -18,6 +18,13 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { store } from './src/store';
 
 import * as flipperDebbuger from 'react-query-native-devtools';
+import * as Sentry from 'sentry-expo';
+
+Sentry.init({
+  dsn: 'https://ff664c2fe14d8161466f6d21bc333bb4@o4505313913929728.ingest.sentry.io/4505737827975169',
+  enableInExpoDevelopment: true,
+  debug: true,
+});
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });

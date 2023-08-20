@@ -8,7 +8,9 @@ import { useEffect, useState } from 'react';
 import { userToken_storage, user_storage } from '../storage/storageConfig';
 import { getStorage } from '../storage/storage';
 import { api } from '../services/api';
-import { save } from '../store/slices/user';
+import { UserState, save } from '../store/slices/user';
+
+import * as Sentry from 'sentry-expo';
 
 export function Routes() {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,13 +20,16 @@ export function Routes() {
   const getUser = async () => {
     try {
       setIsLoading(true);
-      const userStored = await getStorage(user_storage);
-      const userToken = await getStorage(userToken_storage);
+      const userStored: UserState['user'] = await getStorage(user_storage);
+      const userToken: UserState['token'] = await getStorage(userToken_storage);
       if (userStored && userToken) {
         api.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
-        dispatch(save({ user: userStored, token: userToken }));
+        dispatch(
+          save({ user: userStored, token: userToken, 'refresh-token': '' }),
+        );
       }
     } catch (error) {
+      Sentry.Native.captureException(error);
     } finally {
       setIsLoading(false);
     }
