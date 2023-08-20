@@ -3,10 +3,20 @@ import { useSelector, TypedUseSelectorHook, useDispatch } from 'react-redux';
 
 import { user } from './slices/user';
 
+const createDebugger = require('redux-flipper').default;
+
 export const store = configureStore({
   reducer: {
     user,
   },
+  middleware: (getDefaultMiddleware) =>
+    __DEV__
+      ? getDefaultMiddleware({ serializableCheck: false }).concat(
+          createDebugger(),
+        )
+      : getDefaultMiddleware({
+          serializableCheck: false,
+        }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

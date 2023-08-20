@@ -5,9 +5,12 @@ import avatarDefault from '../../assets/avatarDefault.png';
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/userContext/types';
 import { api } from '../../services/api';
+import { useAppSelector } from '../../store';
 
 export function HomeHeader() {
-  const { user } = useContext(UserContext);
+  const user = useAppSelector((state) => state.user.user);
+
+  console.log(user);
 
   return (
     <HStack>
@@ -16,7 +19,7 @@ export function HomeHeader() {
           source={
             user
               ? {
-                  uri: `${api.defaults.baseURL}/images/${user.user.avatar}`,
+                  uri: `${api.defaults.baseURL}/images/${user.avatar}`,
                 }
               : avatarDefault
           }
@@ -29,7 +32,7 @@ export function HomeHeader() {
             Boas vindas,
           </Text>
           <Text fontFamily={'heading'} color="gray.100">
-            {user?.user.name}!
+            {user?.name}!
           </Text>
         </VStack>
       </HStack>
