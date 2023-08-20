@@ -1,5 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { api } from '../../services/api';
+import { saveStorage } from '../../storage/storage';
+import { userToken_storage, user_storage } from '../../storage/storageConfig';
 
 interface User {
   id: string;
@@ -15,14 +17,12 @@ interface UserState {
   token: string;
   user: User | null;
   'refresh-token': string;
-  isLoading: boolean;
 }
 
 const initialState: UserState = {
   user: null,
   token: '',
   'refresh-token': '',
-  isLoading: false,
 };
 
 export const userSlice = createSlice({
@@ -33,16 +33,17 @@ export const userSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
       state['refresh-token'] = action.payload['refresh-token'];
-      state.isLoading = false;
+
       api.defaults.headers.common[
         'Authorization'
       ] = `Bearer ${action.payload.token}`;
+      saveStorage(user_storage, state.user);
+      saveStorage(userToken_storage, state.token);
     },
     remove: (state) => {
       state.user = null;
       state.token = '';
       state['refresh-token'] = '';
-      state.isLoading = false;
     },
   },
 });

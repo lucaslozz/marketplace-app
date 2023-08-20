@@ -79,7 +79,7 @@ export function SignIn() {
 
   useEffect(() => {
     if (data?.data) {
-      dispatch(save({ ...data.data, isLoading: false }));
+      dispatch(save(data.data));
     }
   }, [isSuccess]);
 
