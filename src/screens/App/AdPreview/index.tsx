@@ -16,7 +16,6 @@ import { UserPhoto } from '../../../components/UserPhoto';
 import { Button } from '../../../components/Button';
 import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
 import { useContext, useEffect } from 'react';
-import { UserContext } from '../../../contexts/userContext/types';
 
 import avatarDefault from '../../../assets/avatarDefault.png';
 
@@ -27,6 +26,7 @@ import {
   useCreateAdProducts,
 } from '../../../services/requests/products/useCreateAdProducts';
 import { AppError } from '../../../utils/AppError';
+import { useAppSelector } from '../../../store';
 
 type RouteParams = {
   name: string;
@@ -42,11 +42,11 @@ export function AdPreview() {
   const { params } = useRoute();
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
 
+  const user = useAppSelector((state) => state.user.user);
+
   const { mutate, isLoading, error, isSuccess } = useCreateAdProducts();
 
   const { show } = useToast();
-
-  const { user } = useContext(UserContext);
 
   const {
     photo,
@@ -162,14 +162,14 @@ export function AdPreview() {
               source={
                 user
                   ? {
-                      uri: `${api.defaults.baseURL}/images/${user.user.avatar}`,
+                      uri: `${api.defaults.baseURL}/images/${user.avatar}`,
                     }
                   : avatarDefault
               }
               alt="foto de perfil do usuário"
             />
             <Text color="gray.100" fontFamily="body" fontSize="sm">
-              {user?.user.name}
+              {user?.name}
             </Text>
           </HStack>
 

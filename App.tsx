@@ -13,7 +13,6 @@ import { Loading } from './src/components/Loading';
 import { Routes } from './src/routes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { UserContextProvider } from './src/contexts/userContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { store } from './src/store';
@@ -32,20 +31,18 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <NativeBaseProvider theme={theme}>
-        <UserContextProvider>
-          <ReduxProvider store={store}>
-            <StatusBar
-              translucent
-              backgroundColor="transparent"
-              barStyle={'dark-content'}
-            />
-            <BottomSheetModalProvider>
-              <GestureHandlerRootView style={{ flex: 1 }}>
-                {fontsLoaded ? <Routes /> : <Loading />}
-              </GestureHandlerRootView>
-            </BottomSheetModalProvider>
-          </ReduxProvider>
-        </UserContextProvider>
+        <ReduxProvider store={store}>
+          <StatusBar
+            translucent
+            backgroundColor="transparent"
+            barStyle={'dark-content'}
+          />
+          <BottomSheetModalProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              {fontsLoaded ? <Routes /> : <Loading />}
+            </GestureHandlerRootView>
+          </BottomSheetModalProvider>
+        </ReduxProvider>
       </NativeBaseProvider>
     </QueryClientProvider>
   );

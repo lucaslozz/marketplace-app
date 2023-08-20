@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthRoutes } from './auth.routes';
+
 import { Loading } from '../components/Loading';
 import { AppRoutes } from './app.routes';
 import { useAppSelector } from '../store';

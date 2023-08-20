@@ -19,7 +19,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from '@react-navigation/native';
 import { AuthNavigatorRoutesProps } from '../../../routes/auth.routes';
 import { useLogin } from '../../../services/requests/user/useLogin';
-import { UserContext } from '../../../contexts/userContext/types';
+
 import { AppError } from '../../../utils/AppError';
 import { Input } from '../../../components/Input';
 import { Button } from '../../../components/Button';

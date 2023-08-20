@@ -1,17 +1,22 @@
-import { Box, Text } from 'native-base';
+import { Box } from 'native-base';
 
 import { Alert } from 'react-native';
 
-import { useCallback, useContext, useEffect } from 'react';
-import { UserContext } from '../../../contexts/userContext/types';
-import { Button } from '../../../components/Button';
+import { useCallback } from 'react';
+
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { AppNavigatorRoutesProps } from '../../../routes/app.routes';
+import { useAppDispatch } from '../../../store';
+import { remove } from '../../../store/slices/user';
 
 export function SignOut() {
-  const { removeUser } = useContext(UserContext);
+  const dispatch = useAppDispatch();
 
   const { navigate } = useNavigation<AppNavigatorRoutesProps>();
+
+  function userLogout() {
+    dispatch(remove());
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -21,12 +26,12 @@ export function SignOut() {
         [
           {
             text: 'Não',
-            onPress: () => navigate('home'),
+            onPress: () => navigate('hometab'),
             style: 'cancel',
           },
           {
             text: 'Sim',
-            onPress: () => removeUser(),
+            onPress: () => userLogout(),
           },
         ],
         { cancelable: false },

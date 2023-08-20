@@ -2,8 +2,7 @@ import { HStack, VStack, Text } from 'native-base';
 import { UserPhoto } from '../UserPhoto';
 
 import avatarDefault from '../../assets/avatarDefault.png';
-import { useContext } from 'react';
-import { UserContext } from '../../contexts/userContext/types';
+
 import { api } from '../../services/api';
 import { useAppSelector } from '../../store';
 

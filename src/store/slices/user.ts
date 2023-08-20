@@ -22,7 +22,7 @@ const initialState: UserState = {
   user: null,
   token: '',
   'refresh-token': '',
-  isLoading: true,
+  isLoading: false,
 };
 
 export const userSlice = createSlice({
@@ -38,9 +38,15 @@ export const userSlice = createSlice({
         'Authorization'
       ] = `Bearer ${action.payload.token}`;
     },
+    remove: (state) => {
+      state.user = null;
+      state.token = '';
+      state['refresh-token'] = '';
+      state.isLoading = false;
+    },
   },
 });
 
 export const user = userSlice.reducer;
 
-export const { save } = userSlice.actions;
+export const { save, remove } = userSlice.actions;
