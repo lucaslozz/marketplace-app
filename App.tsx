@@ -18,10 +18,17 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { store } from './src/store';
 
+import * as flipperDebbuger from 'react-query-native-devtools';
+
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
 
   const queryClient = new QueryClient();
+
+  if (__DEV__) {
+    flipperDebbuger.addPlugin({ queryClient });
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <NativeBaseProvider theme={theme}>

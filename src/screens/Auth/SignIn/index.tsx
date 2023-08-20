@@ -23,7 +23,7 @@ import { UserContext } from '../../../contexts/userContext/types';
 import { AppError } from '../../../utils/AppError';
 import { Input } from '../../../components/Input';
 import { Button } from '../../../components/Button';
-import { api } from '../../../services/api';
+
 import { useAppDispatch } from '../../../store';
 import { save } from '../../../store/slices/user';
 
@@ -46,8 +46,6 @@ export function SignIn() {
   const { navigate } = useNavigation<AuthNavigatorRoutesProps>();
 
   const { mutate, data, error, isLoading, isSuccess } = useLogin();
-
-  const { saveUser } = useContext(UserContext);
 
   const { show } = useToast();
 
@@ -81,7 +79,6 @@ export function SignIn() {
 
   useEffect(() => {
     if (data?.data) {
-      saveUser(data.data);
       dispatch(save({ ...data.data, isLoading: false }));
     }
   }, [isSuccess]);

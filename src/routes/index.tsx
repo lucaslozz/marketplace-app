@@ -1,20 +1,21 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthRoutes } from './auth.routes';
-import { useContext } from 'react';
-import { UserContext } from '../contexts/userContext/types';
 import { Loading } from '../components/Loading';
 import { AppRoutes } from './app.routes';
+import { useAppSelector } from '../store';
 
 export function Routes() {
-  const { user, loadingUser } = useContext(UserContext);
+  const userId = useAppSelector((state) => state.user.user?.id);
 
-  if (loadingUser) {
+  const isUserLoading = useAppSelector((state) => state.user.isLoading);
+
+  if (isUserLoading) {
     return <Loading />;
   }
 
   return (
     <NavigationContainer>
-      {user ? <AppRoutes /> : <AuthRoutes />}
+      {userId ? <AppRoutes /> : <AuthRoutes />}
     </NavigationContainer>
   );
 }
